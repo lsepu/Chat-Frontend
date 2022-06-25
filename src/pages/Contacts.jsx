@@ -8,6 +8,7 @@ const Contacts = () => {
       <div className="content-division">
         <Menu />
         <div className="content-main">
+          <h1 style={{textAlign:"center"}}>Contact list</h1>
           <ContactCard />
           <button style={{ float: "right" }} className="btn">
             Add contact

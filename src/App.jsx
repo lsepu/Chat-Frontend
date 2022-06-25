@@ -1,39 +1,32 @@
 import "./App.css";
 import Contacts from "./pages/Contacts";
 import Register from "./pages/Register";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import { useSelector } from "react-redux";
+import Login from "./pages/Login";
 
 function App() {
-  const {user} = useSelector((state) => state.logged)
+  const { user } = useSelector((state) => state.logged);
   return (
-    <div className="App">
+
       <BrowserRouter>
-    {user!==null?
-      (<p></p>
-      ):
-      <Navbar bg="ligth" expand="lg">
-      <Container>
-        <Navbar.Brand href="">Don Raul’s Hardware store</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="SignIn">Sign in</Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-      }
-      <Routes>
-        <Route path="SignIn" element={<Register />}/>
-        <Route path="welcome" element={<Contacts />}/>
-      </Routes>
-    </BrowserRouter>
-    </div>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="contacts" element={<Contacts />} />
+          <Route
+            path="*"
+            element={
+              <div>
+                <h2>404 Page not found</h2>
+              </div>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+
   );
 }
 

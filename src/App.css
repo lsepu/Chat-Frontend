@@ -16,7 +16,7 @@ input {
   font-size: 1.2em;
 }
 
-.container {
+.app-container {
   width: 1280px;
   margin: auto;
 }
@@ -112,4 +112,5 @@ min-height: 40em;
 
 body {
   font-family: Raleway, sans-serif;
+  background-color: darkturquoise!important;
 }

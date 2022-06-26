@@ -1,38 +1,138 @@
-.App {
-  text-align: center;
+
+
+html {
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+input {
+  display: block;
+  width: 100%;
+  padding: 0.2em;
+  margin: 0.2em 0 0.6em;
+  font-size: 1.2em;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app-container {
+  width: 1280px;
+  margin: auto;
+}
+
+.btn {
+  background-color: salmon!important;
+  color: white!important;
+  border: none;
+  margin: 1em 0;
+  color: white;
+  padding: 1em;
+  min-width: 7em;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.btn--login{
+  width: 100%;
+}
+
+.message {
+  background: blanchedalmond;
+  padding: 1em 0.5em;
+  margin: 1em 0;
+}
+
+html {
+  background: darkturquoise;
+}
+
+h1{
+  font-size: 25px;
+  margin-bottom: 15px;
+}
+
+.form-wrapper {
+  padding: 5%;
+  background: white;
+  max-width: 40em;
+  margin: 6% auto;
+  box-shadow: 1em 1em 0 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn-logout{
+  background-color: rgb(241, 165, 157)!important;
+}
+
+.content-wrapper {
+  padding: 5%;
+  background: white;
+  max-width: 80em;
+  min-height: 50em;
+  margin: 1% auto;
+  box-shadow: 1em 1em 0 0 rgba(0, 0, 0, 0.2);
+}
+
+.content-division {
+  display: flex;
+}
+
+.cardMenu-container {
   display: flex;
   flex-direction: column;
+}
+
+.content-main{
+  margin-left: 3em;
+  padding: 2em 5em;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(176, 182, 192) 0px 0px 0px 1px inset;
+  width: 100%;
+min-height: 40em;
+}
+
+.contact-card{
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  padding: 1% 2%;
+  background-color: rgb(253, 235, 235);
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
 }
 
-.App-link {
-  color: #61dafb;
+.btn:hover{
+  background-color: rgb(253, 105, 89);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.cardMenu-item {
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  padding: 5%;
+  min-width: 10em;
+  text-align: center;
+  background-color: rgb(146, 205, 245);
+  cursor: pointer;
+}
+
+.cardMenu-item:hover{
+  background-color: rgb(135, 199, 241);
+}
+
+.cardMenu-container > * {
+  margin-top: 1.5em;
+}
+
+.chat{
+  height: 80%;
+  border: 1px solid #b0b6c0;
+}
+
+.send-message{
+  display: flex;
+  align-items: center;
+}
+
+body {
+  font-family: Raleway, sans-serif;
+  background-color: darkturquoise!important;
 }

@@ -11,6 +11,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const signInForm = () => {
     const regEmail =
       /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
@@ -27,8 +28,7 @@ const Register = () => {
           const user = userCredential.user;
           console.log("****user****");
           console.log(user);
-          dispatch(logInInReducer(user));
-          navigate("/contacts");
+          navigate("/login");
         })
         .catch((error) => {
           const errorCode = error.code;

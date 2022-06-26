@@ -1,6 +1,5 @@
-import { sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
+import { browserLocalPersistence, browserSessionPersistence, inMemoryPersistence, sendEmailVerification, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
 import React, { useEffect } from "react";
-
 import { useState } from "react";
 import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
@@ -37,11 +36,10 @@ const Login = () => {
         loginInput.email.toString(),
         loginInput.password.toString()
       );
-
-      // sendEmailVerification(auth.currentUser).then(() => {
-      //   console.log("Email verification sent!");
-      // })
-      
+      console.log(user);
+      setPersistence(auth, inMemoryPersistence).then(() => {
+        console.log("Hola");
+      })
     } catch (error) {
       let message;
       if (error instanceof Error) message = error.message;

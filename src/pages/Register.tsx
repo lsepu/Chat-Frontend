@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "../firebase";
 import Button from "react-bootstrap/Button";
@@ -29,6 +29,9 @@ const Register = () => {
           console.log("****user****");
           console.log(user);
           navigate("/login");
+          sendEmailVerification(user).then(() => {
+            console.log("Email verification sent!");
+          })
         })
         .catch((error) => {
           const errorCode = error.code;

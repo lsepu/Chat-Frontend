@@ -1,4 +1,4 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
 import React, { useEffect } from "react";
 
 import { useState } from "react";
@@ -37,6 +37,11 @@ const Login = () => {
         loginInput.email.toString(),
         loginInput.password.toString()
       );
+
+      // sendEmailVerification(auth.currentUser).then(() => {
+      //   console.log("Email verification sent!");
+      // })
+      
     } catch (error) {
       let message;
       if (error instanceof Error) message = error.message;

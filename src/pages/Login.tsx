@@ -1,4 +1,4 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { inMemoryPersistence, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
 import React, { useEffect } from "react";
 
 import { useState } from "react";
@@ -39,6 +39,10 @@ const Login = () => {
         loginInput.email.toString(),
         loginInput.password.toString()
       );
+      console.log(user);
+      setPersistence(auth, inMemoryPersistence).then(() => {
+        console.log("Hola");
+      })
     } catch (error) {
       let message;
       if (error instanceof Error) message = error.message;

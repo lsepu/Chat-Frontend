@@ -1,6 +1,6 @@
 import { signOut } from "firebase/auth";
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { logOutInReducer } from "../state/features/loggedInSlice";
@@ -9,11 +9,18 @@ const Menu = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const { user } = useSelector((state) => state.logged);
+
   const logout = () => {
     signOut(auth);
     dispatch(logOutInReducer());
-    navigate("/login");
   };
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    } 
+  }, [user]);
 
   return (
     <div>

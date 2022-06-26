@@ -16,7 +16,7 @@ input {
   font-size: 1.2em;
 }
 
-.container {
+.app-container {
   width: 1280px;
   margin: auto;
 }
@@ -46,6 +46,11 @@ html {
   background: darkturquoise;
 }
 
+h1{
+  font-size: 25px;
+  margin-bottom: 15px;
+}
+
 .form-wrapper {
   padding: 5%;
   background: white;
@@ -54,12 +59,16 @@ html {
   box-shadow: 1em 1em 0 0 rgba(0, 0, 0, 0.2);
 }
 
+.btn-logout{
+  background-color: rgb(241, 165, 157)!important;
+}
+
 .content-wrapper {
   padding: 5%;
   background: white;
   max-width: 80em;
   min-height: 50em;
-  margin: 6% auto;
+  margin: 1% auto;
   box-shadow: 1em 1em 0 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -122,4 +131,5 @@ min-height: 40em;
 
 body {
   font-family: Raleway, sans-serif;
+  background-color: darkturquoise!important;
 }

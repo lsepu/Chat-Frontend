@@ -1,9 +1,16 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
-import React from "react";
+import React, { useEffect } from "react";
+
 import { useState } from "react";
 import { auth } from "../firebase";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Login = () => {
+
+  const { user } = useSelector((state) => state.logged);
+  const navigate = useNavigate();
+
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
@@ -15,6 +22,12 @@ const Login = () => {
       [e.target.name]: [e.target.value],
     });
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate("/chatroom");
+    } 
+  }, [user]);
 
   const loginUser = async (e) => {
     e.preventDefault();
@@ -55,9 +68,7 @@ const Login = () => {
             name="password"
           />
 
-          <p>
-            New to the app? <a href="">Create an account</a>
-          </p>
+          <p>New to the app? <Link to="/register">Create an account</Link></p>
 
           <button onClick={loginUser} className="btn btn--login">
             Log In

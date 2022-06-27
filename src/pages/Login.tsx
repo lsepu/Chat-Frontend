@@ -1,11 +1,12 @@
 import { inMemoryPersistence, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
 import React, { useEffect } from "react";
-
 import { useState } from "react";
 import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { stateType } from "../state/store";
+import axios from "axios";
+import { getUserByEmail } from "../actions/UserActions";
 
 const Login = () => {
   const { logged } = useSelector((state: stateType) => state.user);
@@ -15,6 +16,19 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const [ip, setIP] = useState<string>('');
+
+  //creating function to load ip address from the API
+  const getData = async () => {
+    const res = await axios.get('https://geolocation-db.com/json/')
+    setIP(res.data.IPv4)
+  }
+  
+  useEffect( () => {
+    //passing getData method to the lifecycle method
+    getData()
+  }, [])
 
   const setLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginInput({
@@ -29,10 +43,16 @@ const Login = () => {
     }
   }, [logged]);
 
-  const loginUser = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const loginUser = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
+    // const userByEmail = await getUserByEmail(loginInput.email)
+
+    // if(userByEmail.isLogged){
+    //   console.log("User already logged in");
+    // }else{
+    //   console.log("User not logged in yet");
+    // }
+    
     try {
       const user = await signInWithEmailAndPassword(
         auth,
@@ -40,9 +60,9 @@ const Login = () => {
         loginInput.password.toString()
       );
       console.log(user);
-      setPersistence(auth, inMemoryPersistence).then(() => {
-        console.log("Hola");
-      })
+      // setPersistence(auth, inMemoryPersistence).then(() => {
+      //   console.log("Hola");
+      // })
     } catch (error) {
       let message;
       if (error instanceof Error) message = error.message;
@@ -77,7 +97,6 @@ const Login = () => {
           <p>
             New to the app? <Link to="/register">Create an account</Link>
           </p>
-
           <button onClick={loginUser} className="btn btn--login">
             Log In
           </button>

@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Login from "./pages/Login";
 import { login, logout } from "./state/features/userSlice";
 import { stateType } from "./state/store";
+import { getUserByEmail } from "./actions/UserActions";
 
 function App() {
   const dispatch = useDispatch();
@@ -22,6 +23,8 @@ function App() {
     onAuthStateChanged(auth, (userAuth) => {
       if (userAuth) {
         if (userAuth.emailVerified) {
+          let userByEmail = getUserByEmail(`${userAuth.email}`)
+          console.log(userByEmail);
           console.log("is verified");
           dispatch(
             login({

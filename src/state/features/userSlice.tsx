@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface userState {
-  userName: String;
-  email: String;
-  contacts: String[];
+  email: string;
+  contacts: string[];
 }
 
 interface IUser {

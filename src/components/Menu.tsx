@@ -10,6 +10,7 @@ const Menu = () => {
 
   const { logged }  = useSelector((state: stateType) => state.user);
 
+
   const logout = () => {
     signOut(auth);
     

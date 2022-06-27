@@ -39,10 +39,10 @@ const Login = () => {
         loginInput.email.toString(),
         loginInput.password.toString()
       );
-      console.log(user);
-      setPersistence(auth, inMemoryPersistence).then(() => {
-        console.log("Hola");
-      })
+      // console.log(user);
+      // setPersistence(auth, inMemoryPersistence).then(() => {
+      //   console.log("Hola");
+      // })
     } catch (error) {
       let message;
       if (error instanceof Error) message = error.message;

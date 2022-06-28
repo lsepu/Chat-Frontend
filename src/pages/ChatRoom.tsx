@@ -2,13 +2,19 @@ import Menu from "../components/Menu";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import { useEffect } from "react";
-import { stateType } from "../state/store";
-import { useSelector } from "react-redux";
+import { AppDispatch, stateType } from "../state/store";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { useState } from "react";
+import {
+  addOwnPrivateChatMessage,
+  addPrivateChatMessage,
+  createPrivateChat,
+} from "../state/features/chatSlice";
 
 interface IMessage {
-  idSender: string | undefined;
-  idReceiver: string;
+  idSender: string;
+  idReceiver: string | undefined;
   message: string;
   status: string;
   isSeen: boolean;
@@ -17,8 +23,17 @@ interface IMessage {
 var stompClient: any = null;
 const ChatRoom = () => {
   const { logged, user } = useSelector((state: stateType) => state.user);
+  const chat = useSelector((state: stateType) => state.chat);
+
+  const { receiver } = useParams();
   const [message, setMessage] = useState("");
-  const [chatHistory, setChatHistory] = useState<any>([]); 
+  const [chatHistory, setChatHistory] = useState<any>([]);
+  const [privateChats, setPrivateChats] = useState(new Map());
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  console.log(chat);
+  console.log(receiver);
 
   useEffect(() => {
     logged && connectToSocket();
@@ -33,6 +48,7 @@ const ChatRoom = () => {
   const onConnected = () => {
     console.log("connected");
     stompClient.subscribe("/chatroom/public", onMessageReceived);
+    stompClient.subscribe("/user/" + user.email + "/private", onPrivateMessage);
     userJoin();
   };
 
@@ -43,20 +59,58 @@ const ChatRoom = () => {
         console.log("JOIN");
         break;
       case "MESSAGE":
-        console.log(payloadData);
         chatHistory.push(payloadData);
         setChatHistory([...chatHistory]);
         break;
     }
   };
 
+  const onPrivateMessage = (payload: any) => {
+    var payloadData = JSON.parse(payload.body);
+
+    if (privateChats.get(payloadData.idSender)) {
+      //manage local state
+      //deep copy of array
+      let tempList = JSON.parse(
+        JSON.stringify(privateChats.get(payloadData.idSender))
+      );
+      tempList.push(payloadData);
+
+      privateChats.set(payloadData.idSender, tempList);
+      privateChats.get(payloadData.idSender).push(payloadData);
+      setPrivateChats(new Map(privateChats));
+
+      //manage in redux
+      dispatch(
+        addPrivateChatMessage({
+          data: payloadData,
+        })
+      );
+    } else {
+      let list = [];
+      list.push(payloadData);
+
+      //manage local state
+      privateChats.set(payloadData.idSender, list);
+      setPrivateChats(new Map(privateChats));
+
+      //manage in redux
+      dispatch(
+        createPrivateChat({
+          data: payloadData,
+          list: list,
+        })
+      );
+    }
+  };
+
   const userJoin = () => {
-    var chatMessage : IMessage = {
-      idSender: user?.email,
-      idReceiver: "public",
+    var chatMessage: IMessage = {
+      idSender: user.email,
+      idReceiver: receiver,
       message: "",
       status: "JOIN",
-      isSeen: false
+      isSeen: false,
     };
     stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
   };
@@ -68,14 +122,34 @@ const ChatRoom = () => {
   const sendValue = () => {
     if (stompClient) {
       var chatMessage: IMessage = {
-        idSender: user?.email,
-        idReceiver: "public",
+        idSender: user.email,
+        idReceiver: receiver,
         message: message,
         status: "MESSAGE",
-        isSeen: false
+        isSeen: false,
       };
-      console.log(chatMessage);
       stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+      setMessage("");
+    }
+  };
+
+  const sendPrivateValue = () => {
+    if (stompClient) {
+      var chatMessage: IMessage = {
+        idSender: user.email,
+        idReceiver: receiver,
+        message: message,
+        status: "MESSAGE",
+        isSeen: false,
+      };
+
+      dispatch(
+        addOwnPrivateChatMessage({
+          data: chatMessage,
+        })
+      );
+
+      stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
       setMessage("");
     }
   };
@@ -86,12 +160,11 @@ const ChatRoom = () => {
         <Menu />
         <div className="content-main">
           <div className="chat">
-            {
-              chatHistory.map((chat : any, index : number) => (
-                <p style={{marginLeft: "10px"}} key={index}><b>{chat.idSender}</b> : {chat.message} </p>
-              ))
-            }
-
+            {chatHistory.map((chat: any, index: number) => (
+              <p style={{ marginLeft: "10px" }} key={index}>
+                <b>{chat.idSender}</b> : {chat.message}{" "}
+              </p>
+            ))}
           </div>
           <div className="send-message">
             <input
@@ -102,7 +175,12 @@ const ChatRoom = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <button onClick={sendValue} className="btn">Send</button>
+            <button
+              onClick={receiver === "public" ? sendValue : sendPrivateValue}
+              className="btn"
+            >
+              Send
+            </button>
           </div>
         </div>
       </div>

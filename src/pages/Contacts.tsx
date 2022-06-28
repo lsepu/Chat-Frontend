@@ -1,14 +1,21 @@
+import { useSelector } from "react-redux";
 import ContactCard from "../components/ContactCard";
 import Menu from "../components/Menu";
+import { stateType } from "../state/store";
 
 const Contacts = () => {
+
+  const { user } = useSelector((state: stateType) => state.user);
+
   return (
     <div className="content-wrapper">
       <div className="content-division">
         <Menu />
         <div className="content-main">
           <h1 style={{textAlign:"center"}}>Contact list</h1>
-          <ContactCard />
+          {
+            user.contacts.map((contact, index) => <ContactCard key={index} contact={contact} /> )
+          }
           <button style={{ float: "right" }} className="btn">
             Add contact
           </button>

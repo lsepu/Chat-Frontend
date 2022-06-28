@@ -6,12 +6,15 @@ interface userState {
 }
 
 interface IUser {
-  user: userState | null;
+  user: userState;
   logged: boolean;
 }
 
 const initialState: IUser = {
-  user: null,
+  user: {
+    email: "",
+    contacts: [""],
+  },
   logged: false,
 };
 
@@ -31,4 +34,4 @@ export const userSlice = createSlice({
 
 export default userSlice.reducer;
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout, } = userSlice.actions;

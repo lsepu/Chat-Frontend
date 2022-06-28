@@ -108,14 +108,18 @@ min-height: 40em;
 .cardMenu-item {
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   padding: 5%;
-  min-width: 10em;
+  min-width: 15em;
   text-align: center;
   background-color: rgb(146, 205, 245);
   cursor: pointer;
+  text-decoration: none;
+  color: black;
 }
+
 
 .cardMenu-item:hover{
   background-color: rgb(135, 199, 241);
+  color: black;
 }
 
 .cardMenu-container > * {

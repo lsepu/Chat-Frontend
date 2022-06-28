@@ -26,6 +26,7 @@ function App() {
           dispatch(
             login({
               email: userAuth.email,
+              contacts: ["lesepulveda@uninorte.edu.co"]
             })
           );
         } else {
@@ -63,14 +64,14 @@ function App() {
             <Route
               path="/"
               element={
-                <Navigate to={logged ? "/chatroom" : "/login"} replace />
+                <Navigate to={logged ? "/chatroom/public" : "/login"} replace />
               }
             />
 
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             <Route path="contacts" element={<Contacts />} />
-            <Route path="chatroom" element={<ChatRoom />} />
+            <Route path="chatroom/:receiver" element={<ChatRoom />} />
             <Route
               path="*"
               element={

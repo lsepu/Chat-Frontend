@@ -25,7 +25,7 @@ const Login = () => {
 
   useEffect(() => {
     if (logged) {
-      navigate("/chatroom");
+      navigate("/chatroom/public");
     }
   }, [logged]);
 

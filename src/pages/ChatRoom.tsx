@@ -25,7 +25,7 @@ const ChatRoom = () => {
   const { logged, user } = useSelector((state: stateType) => state.user);
   const chat = useSelector((state: stateType) => state.chat);
 
-  const { receiver } = useParams();
+  const { receiver} = useParams();
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState<any>([]);
   const [privateChats, setPrivateChats] = useState(new Map());
@@ -33,7 +33,7 @@ const ChatRoom = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   console.log(chat);
-  console.log(receiver);
+  // console.log(receiver);
 
   useEffect(() => {
     logged && connectToSocket();
@@ -46,7 +46,6 @@ const ChatRoom = () => {
   };
 
   const onConnected = () => {
-    console.log("connected");
     stompClient.subscribe("/chatroom/public", onMessageReceived);
     stompClient.subscribe("/user/" + user.email + "/private", onPrivateMessage);
     userJoin();
@@ -69,6 +68,7 @@ const ChatRoom = () => {
     var payloadData = JSON.parse(payload.body);
 
     if (privateChats.get(payloadData.idSender)) {
+
       //manage local state
       //deep copy of array
       let tempList = JSON.parse(
@@ -87,20 +87,47 @@ const ChatRoom = () => {
         })
       );
     } else {
+
       let list = [];
       list.push(payloadData);
+
+      console.log("COSAS");
+      console.log(list);
 
       //manage local state
       privateChats.set(payloadData.idSender, list);
       setPrivateChats(new Map(privateChats));
 
       //manage in redux
+      // IF I'M THE ONE THAT INITIATED THE CHAT THEN IS NOT NEEDED TO CREATE WHEN SOMEONE SEND ME THE MESSAGE
+
+      // console.log("michat");
+      // console.log(chatStarted)
+
+      // if (chatStarted) {
+      //   console.log("chat empezado");
+      //   dispatch(
+      //     addPrivateChatMessage({
+      //       data: payloadData,
+      //     })
+      //   );
+      // } else {
+      //   console.log("no deberia entrar aca")
+      //   dispatch(
+      //     createPrivateChat({
+      //       data: payloadData,
+      //       list: list,
+      //     })
+      //   );
+      // }
+
       dispatch(
         createPrivateChat({
           data: payloadData,
           list: list,
         })
       );
+
     }
   };
 

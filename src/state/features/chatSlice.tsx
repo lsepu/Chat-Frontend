@@ -23,8 +23,12 @@ export const chatSlice = createSlice({
       state.privateChatNames.push(action.payload.email);
     },
     createPrivateChat: (state, action) => {
-      state.privateChats[action.payload.data.idSender] = action.payload.list;
-      state.privateChatNames.push(action.payload.data.idSender);
+      if(!state.privateChats[action.payload.data.idSender]){
+        state.privateChats[action.payload.data.idSender] = action.payload.list;
+        state.privateChatNames.push(action.payload.data.idSender);
+      } else{
+        state.privateChats[action.payload.data.idSender].push(action.payload.data);
+      }
     },
     addPrivateChatMessage: (state, action) => {
       state.privateChats[action.payload.data.idSender].push(

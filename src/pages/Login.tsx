@@ -6,7 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { stateType } from "../state/store";
 import axios from "axios";
-import { getUserByEmail } from "../actions/UserActions";
+import { getUserByEmail, postNewUser, userType } from "../actions/UserActions";
+
 
 const Login = () => {
   const { logged } = useSelector((state: stateType) => state.user);
@@ -45,28 +46,35 @@ const Login = () => {
 
   const loginUser = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    // const userByEmail = await getUserByEmail(loginInput.email)
-
-    // if(userByEmail.isLogged){
-    //   console.log("User already logged in");
-    // }else{
-    //   console.log("User not logged in yet");
-    // }
     
     try {
+      
       const user = await signInWithEmailAndPassword(
         auth,
         loginInput.email.toString(),
         loginInput.password.toString()
       );
-      console.log(user);
+      let userByEmail = await getUserByEmail(`${user.user.email}`);
+      
+      if(userByEmail.status === 500){
+        const newUserAsUserType: userType = {
+          userName: `${user.user.email}`,
+          email: `${user.user.email}`,
+          contacts: [],
+          isLogged: true,
+          ipAddress: ip
+        }
+        var userPosted = await postNewUser(newUserAsUserType);
+        console.log(userPosted);
+      }
+      
       // setPersistence(auth, inMemoryPersistence).then(() => {
       //   console.log("Hola");
       // })
     } catch (error) {
-      let message;
-      if (error instanceof Error) message = error.message;
-      reportError({ message });
+        let message;
+        if (error instanceof Error) message = error.message;
+        reportError({ message });
     }
   };
 

@@ -23,9 +23,11 @@ function App() {
     onAuthStateChanged(auth, (userAuth) => {
       if (userAuth) {
         if (userAuth.emailVerified) {
-          let userByEmail = getUserByEmail(`${userAuth.email}`)
-          console.log(userByEmail);
-          console.log("is verified");
+          //if userByEmail.status === 500
+          //userAsUserType
+          //postNewUser
+          // console.log(userAuth);
+          // console.log("is verified");
           dispatch(
             login({
               email: userAuth.email,

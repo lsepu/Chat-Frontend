@@ -39,3 +39,14 @@ export const postNewUser = async(newUser:userType) => {
       })
       return (await response.json()) as userType
 }
+
+export const putUser = async(user:userType) => {
+  const response = await fetch(`https://realtime-chat-app-sofkau.herokuapp.com/user`, {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify(user),
+    })
+    return (await response.json()) as userType
+}

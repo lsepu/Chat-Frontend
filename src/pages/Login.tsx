@@ -1,4 +1,4 @@
-import { inMemoryPersistence, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
+import { inMemoryPersistence, setPersistence, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { auth } from "../firebase";
@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { stateType } from "../state/store";
 import axios from "axios";
-import { getUserByEmail, postNewUser, userType } from "../actions/UserActions";
+import { getUserByEmail, postNewUser, putUser, userType } from "../actions/UserActions";
 
 
 const Login = () => {
@@ -38,11 +38,11 @@ const Login = () => {
     });
   };
 
-  useEffect(() => {
-    if (logged) {
-      navigate("/chatroom");
-    }
-  }, [logged]);
+  // useEffect(() => {
+  //   if (logged) {
+  //     navigate("/chatroom");
+  //   }
+  // }, [logged]);
 
   const loginUser = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -54,8 +54,21 @@ const Login = () => {
         loginInput.email.toString(),
         loginInput.password.toString()
       );
+
       let userByEmail = await getUserByEmail(`${user.user.email}`);
       
+      if(userByEmail.isLogged && (userByEmail.ip != ip)){
+        auth.signOut()
+        //navigate("/login")
+        window.alert("There is another sesion active")
+      }else{
+        navigate("/chatroom")
+      }
+      userByEmail.isLogged = true;
+      userByEmail.ipAddress = ip;
+      const userLoggedStatusUpdated = await putUser(userByEmail)
+      
+
       if(userByEmail.status === 500){
         const newUserAsUserType: userType = {
           userName: `${user.user.email}`,
@@ -68,9 +81,9 @@ const Login = () => {
         console.log(userPosted);
       }
       
-      // setPersistence(auth, inMemoryPersistence).then(() => {
-      //   console.log("Hola");
-      // })
+      setPersistence(auth, inMemoryPersistence).then(() => {
+        // console.log("Hola");
+      })
     } catch (error) {
         let message;
         if (error instanceof Error) message = error.message;

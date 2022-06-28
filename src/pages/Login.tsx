@@ -3,13 +3,18 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { stateType } from "../state/store";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, stateType } from "../state/store";
 import axios from "axios";
-import { getUserByEmail, postNewUser, putUser, userType } from "../actions/UserActions";
+// import { getUserByEmail, postNewUser, putUser } from "../actions/UserActions";
+import { getUser, postUser, userType, selectUser, updateUser, selectUserStatus, userFetchStatus } from "../state/features/userSlice";
 
 
 const Login = () => {
+  const userState = useSelector(selectUser());
+  const userStatus = useSelector(selectUserStatus());
+  const dispatch = useDispatch<AppDispatch>();
+
   const { logged } = useSelector((state: stateType) => state.user);
   const navigate = useNavigate();
 
@@ -55,21 +60,11 @@ const Login = () => {
         loginInput.password.toString()
       );
 
-      let userByEmail = await getUserByEmail(`${user.user.email}`);
+      // let userByEmail = await getUserByEmail(`${user.user.email}`);
+      await dispatch(getUser(`${user.user.email}`));
+      console.log(userStatus);
       
-      if(userByEmail.isLogged && (userByEmail.ip != ip)){
-        auth.signOut()
-        //navigate("/login")
-        window.alert("There is another sesion active")
-      }else{
-        navigate("/chatroom")
-      }
-      userByEmail.isLogged = true;
-      userByEmail.ipAddress = ip;
-      const userLoggedStatusUpdated = await putUser(userByEmail)
-      
-
-      if(userByEmail.status === 500){
+      if(userStatus === userFetchStatus.FAILED){
         const newUserAsUserType: userType = {
           userName: `${user.user.email}`,
           email: `${user.user.email}`,
@@ -77,9 +72,38 @@ const Login = () => {
           isLogged: true,
           ipAddress: ip
         }
-        var userPosted = await postNewUser(newUserAsUserType);
-        console.log(userPosted);
+        console.log("Voy a guardar el usuario");
+        
+        dispatch(postUser(newUserAsUserType));
       }
+      
+      if(userState.isLogged && (userState.ipAddress !== ip)){
+        auth.signOut()
+        //navigate("/login")
+        window.alert("There is another sesion active")
+      }else{
+        console.log(userState);
+        
+        navigate("/chatroom")
+      }
+
+      
+
+      // userState.isLogged = true;
+      // userState.ipAddress = ip;
+      // const userLoggedStatusUpdated = await putUser(userState)
+      const userUpdated: userType = {
+          id: userState.id,
+          userName: userState.userName,
+          email: userState.email,
+          contacts: userState.contacts,
+          isLogged: true,
+          ipAddress: ip
+      }
+      dispatch(updateUser(userUpdated))
+      
+
+
       
       setPersistence(auth, inMemoryPersistence).then(() => {
         // console.log("Hola");

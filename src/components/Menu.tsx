@@ -1,26 +1,34 @@
 import { signOut } from "firebase/auth";
 import  { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { getUserByEmail, putUser } from "../actions/UserActions";
+// import { getUserByEmail, putUser } from "../actions/UserActions";
 import { auth } from "../firebase";
-import { stateType } from "../state/store";
+import { postUser, selectUser, updateUser, userType } from "../state/features/userSlice";
+import { AppDispatch, stateType } from "../state/store";
 
 const Menu = () => {
   const navigate = useNavigate();
+  const userState = useSelector(selectUser());
+  const dispatch = useDispatch<AppDispatch>();
+
+
 
   const { logged }  = useSelector((state: stateType) => state.user);
   const userLogged = useSelector((state: stateType) => state.user)
 
   const logout = async() => {
-    const userEmail = userLogged.user?.email;
-    let user = await getUserByEmail(`${userEmail}`)
-    user.isLogged = false;
-    user.ipAddress = "";
-    // console.log(user)
-    const userLoggedStatusUpdated = await putUser(user)
-    // console.log(userLoggedStatusUpdated)
+
+    const updatedUserAsUserType: userType = {
+      userName: `${userState.userName}`,
+      email: `${userState.email}`,
+      contacts: userState.contacts,
+      isLogged: false,
+      ipAddress: ""
+    }
+    dispatch(updateUser(updatedUserAsUserType));
     signOut(auth);
+    
     
   };
 

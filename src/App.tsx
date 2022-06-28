@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Login from "./pages/Login";
 import { login, logout } from "./state/features/userSlice";
 import { stateType } from "./state/store";
-import { getUserByEmail } from "./actions/UserActions";
+// import { getUserByEmail } from "./actions/UserActions";
 
 function App() {
   const dispatch = useDispatch();

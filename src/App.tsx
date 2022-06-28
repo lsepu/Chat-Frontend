@@ -21,11 +21,14 @@ import {
   createPrivateChat,
 } from "./state/features/chatSlice";
 
+
+
 var stompClient: any = null;
 function App() {
   const dispatch = useDispatch<AppDispatch>();
   const { logged, user } = useSelector((state: stateType) => state.user);
   const [isLoading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     onAuthStateChanged(auth, (userAuth) => {
@@ -39,7 +42,7 @@ function App() {
             })
           );
 
-          //connectToSocket();
+          connectToSocket();
 
         } else {
           handleShow();

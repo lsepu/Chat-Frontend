@@ -3,9 +3,7 @@ import { AppDispatch, stateType } from "../state/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import {
-  addOwnPrivateChatMessage,
-} from "../state/features/chatSlice";
+import { addOwnPrivateChatMessage } from "../state/features/chatSlice";
 
 interface IMessage {
   idSender: string;
@@ -15,17 +13,17 @@ interface IMessage {
   isSeen: boolean;
 }
 
-
-const ChatRoom = ({stompClient} : any) => {
+const ChatRoom = ({ stompClient }: any) => {
   const { user } = useSelector((state: stateType) => state.user);
   const chat = useSelector((state: stateType) => state.chat);
 
-  const { receiver} = useParams();
+  const { receiver } = useParams();
   const [message, setMessage] = useState("");
 
   const dispatch = useDispatch<AppDispatch>();
 
   const sendValue = () => {
+    console.log(stompClient);
     if (stompClient) {
       var chatMessage: IMessage = {
         idSender: user.email,
@@ -34,12 +32,14 @@ const ChatRoom = ({stompClient} : any) => {
         status: "MESSAGE",
         isSeen: false,
       };
+
       stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
       setMessage("");
     }
   };
 
   const sendPrivateValue = () => {
+    console.log(stompClient);
     if (stompClient) {
       var chatMessage: IMessage = {
         idSender: user.email,
@@ -65,15 +65,23 @@ const ChatRoom = ({stompClient} : any) => {
       <div className="content-division">
         <Menu />
         <div className="content-main">
+
           <div className="chat">
-
-            {chat.publicChat.map((chat: any, index: number) => (
-              <p style={{ marginLeft: "10px" }} key={index}>
-                <b>{chat.idSender}</b> : {chat.message}{" "}
-              </p>
-            ))}
-
+            {receiver === "public"
+              ? chat.publicChat.map((chat: any, index: number) => (
+                  <p style={{ marginLeft: "10px" }} key={index}>
+                    <b>{chat.idSender}</b> : {chat.message}{" "}
+                  </p>
+                ))
+              : receiver !== undefined &&
+                chat.privateChats[receiver].map((chat: any, index: number) => (
+                  <p style={{ marginLeft: "10px" }} key={index}>
+                    <b>{chat.idSender}</b> : {chat.message}{" "}
+                  </p>
+                ))}
           </div>
+
+
           <div className="send-message">
             <input
               style={{ margin: "0 1em 0 0", padding: "0.6em" }}

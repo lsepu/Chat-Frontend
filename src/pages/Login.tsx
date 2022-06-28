@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { stateType } from "../state/store";
 
-const Login = () => {
+const Login = ({connectToSocket} : any) => {
   const { logged } = useSelector((state: stateType) => state.user);
   const navigate = useNavigate();
 
@@ -25,6 +25,7 @@ const Login = () => {
 
   useEffect(() => {
     if (logged) {
+      connectToSocket();
       navigate("/chatroom/public");
     }
   }, [logged]);

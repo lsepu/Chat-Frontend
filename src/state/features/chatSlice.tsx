@@ -6,11 +6,13 @@ interface IHashMap {
 
 interface IChat {
   privateChats: IHashMap;
+  publicChat: any[];
   privateChatNames: string[]
 }
 
 const initialState: IChat = {
   privateChats: {},
+  publicChat: [],
   privateChatNames: []
 };
 
@@ -39,11 +41,14 @@ export const chatSlice = createSlice({
       state.privateChats[action.payload.data.idReceiver].push(
         action.payload.data
       );
+    },
+    addPublicChatMessage: (state, action) => {
+      state.publicChat.push(action.payload.message);
     }
   },
 });
 
 export default chatSlice.reducer;
 
-export const { createPrivateChat, addPrivateChatMessage, initializeChat, addOwnPrivateChatMessage } =
+export const { createPrivateChat, addPrivateChatMessage, initializeChat, addOwnPrivateChatMessage, addPublicChatMessage } =
   chatSlice.actions;

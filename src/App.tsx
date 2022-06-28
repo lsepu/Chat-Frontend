@@ -11,11 +11,20 @@ import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 import Login from "./pages/Login";
 import { login, logout } from "./state/features/userSlice";
-import { stateType } from "./state/store";
+import { AppDispatch, stateType } from "./state/store";
 
+import { over } from "stompjs";
+import SockJS from "sockjs-client";
+import {
+  addPrivateChatMessage,
+  addPublicChatMessage,
+  createPrivateChat,
+} from "./state/features/chatSlice";
+
+var stompClient: any = null;
 function App() {
-  const dispatch = useDispatch();
-  const { logged } = useSelector((state: stateType) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
+  const { logged, user } = useSelector((state: stateType) => state.user);
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,9 +35,12 @@ function App() {
           dispatch(
             login({
               email: userAuth.email,
-              contacts: ["lesepulveda@uninorte.edu.co"]
+              contacts: ["lesepulveda@uninorte.edu.co"],
             })
           );
+
+          //connectToSocket();
+
         } else {
           handleShow();
           signOut(auth);
@@ -43,6 +55,99 @@ function App() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  //--------------------------------------------Socket Config-------------------------------------------------------------------------
+  const [privateChats, setPrivateChats] = useState(new Map());
+
+  const chat = useSelector((state: stateType) => state.chat);
+  console.log(chat);
+  // console.log(receiver);
+
+  const connectToSocket = () => {
+    let Sock = new SockJS("http://localhost:8080/ws");
+    stompClient = over(Sock);
+    stompClient.connect({}, onConnected, onError);
+  };
+
+  const onConnected = () => {
+    stompClient.subscribe("/chatroom/public", onMessageReceived);
+    console.log("EMAIL");
+    console.log(user.email);
+    stompClient.subscribe(
+      "/user/" + user.email + "/private",
+      onPrivateMessage
+    );
+    userJoin();
+  };
+
+  const onMessageReceived = (payload: any) => {
+    var payloadData = JSON.parse(payload.body);
+    switch (payloadData.status) {
+      case "JOIN":
+        console.log("JOIN");
+        break;
+      case "MESSAGE":
+        dispatch(
+          addPublicChatMessage({
+            message: payloadData,
+          })
+        );
+        break;
+    }
+  };
+
+  const onPrivateMessage = (payload: any) => {
+    var payloadData = JSON.parse(payload.body);
+
+    if (privateChats.get(payloadData.idSender)) {
+      //manage local state
+      //deep copy of array
+      let tempList = JSON.parse(
+        JSON.stringify(privateChats.get(payloadData.idSender))
+      );
+      tempList.push(payloadData);
+
+      privateChats.set(payloadData.idSender, tempList);
+      privateChats.get(payloadData.idSender).push(payloadData);
+      setPrivateChats(new Map(privateChats));
+
+      //manage in redux
+      dispatch(
+        addPrivateChatMessage({
+          data: payloadData,
+        })
+      );
+    } else {
+      let list = [];
+      list.push(payloadData);
+
+      //manage local state
+      privateChats.set(payloadData.idSender, list);
+      setPrivateChats(new Map(privateChats));
+
+      dispatch(
+        createPrivateChat({
+          data: payloadData,
+          list: list,
+        })
+      );
+    }
+  };
+
+  const userJoin = () => {
+    var chatMessage = {
+      idSender: user.email,
+      idReceiver: "public",
+      message: "",
+      status: "JOIN",
+      isSeen: false,
+    };
+    stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+  };
+
+  const onError = (err: any) => {
+    console.log(err);
+  };
 
   return (
     <div>
@@ -68,10 +173,18 @@ function App() {
               }
             />
 
-            <Route path="login" element={<Login />} />
+            <Route path="login" element={<Login connectToSocket={connectToSocket}/>} />
             <Route path="register" element={<Register />} />
             <Route path="contacts" element={<Contacts />} />
-            <Route path="chatroom/:receiver" element={<ChatRoom />} />
+            <Route
+              path="chatroom/:receiver"
+              element={
+                <ChatRoom
+                  privateChats={privateChats}
+                  stompClient={stompClient}
+                />
+              }
+            />
             <Route
               path="*"
               element={

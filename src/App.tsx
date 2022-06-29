@@ -67,7 +67,7 @@ function App() {
   // console.log(receiver);
 
   const connectToSocket = () => {
-    let Sock = new SockJS("http://localhost:8080/ws");
+    let Sock = new SockJS("https://realtime-chat-app-sofkau.herokuapp.com//ws");
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };

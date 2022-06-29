@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { auth } from "./firebase";
 import ChatRoom from "./pages/ChatRoom";
+import Channels from "./pages/Channels";
 import Contacts from "./pages/Contacts";
 import Register from "./pages/Register";
 import Modal from "react-bootstrap/Modal";
@@ -71,6 +72,7 @@ function App() {
             <Route path="register" element={<Register />} />
             <Route path="contacts" element={<Contacts />} />
             <Route path="chatroom" element={<ChatRoom />} />
+            <Route path="channels" element={<Channels />} />
             <Route
               path="*"
               element={

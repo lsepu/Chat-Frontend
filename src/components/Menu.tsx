@@ -45,6 +45,13 @@ const Menu = () => {
         >
           Contacts
         </Link>
+        <Link
+          to="/channels"
+          style={{ textDecoration: "none", color: "black" }}
+          className="cardMenu-item"
+        >
+          Channels
+        </Link>
         <div className="cardMenu-item">Juan</div>
       </div>
     </div>

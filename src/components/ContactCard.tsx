@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { initializeChat } from "../state/features/chatSlice";
+import { updateUser } from "../state/features/userSlice";
 import { AppDispatch, stateType } from "../state/store";
 
 interface IContact {
@@ -10,6 +11,7 @@ interface IContact {
 const ContactCard = ({ contact }: IContact) => {
   const dispatch = useDispatch<AppDispatch>();
   const chat = useSelector((state: stateType) => state.chat);
+  const { user } = useSelector((state: stateType) => state.user);
   const navigate = useNavigate();
 
   //if there is no chat initialized
@@ -25,6 +27,17 @@ const ContactCard = ({ contact }: IContact) => {
     navigate(`/chatroom/${contact}`);
   };
 
+  const deleteContact = () => {
+    const contactsUpdated = [...user.contacts].filter(
+      (email) => email !== contact
+    );
+    const userUpdated = {
+      ...user,
+      contacts: contactsUpdated,
+    };
+    dispatch(updateUser(userUpdated));
+  };
+
   return (
     <div className="contact-card">
       <span>{contact}</span>
@@ -32,7 +45,11 @@ const ContactCard = ({ contact }: IContact) => {
         <button onClick={startPrivateChat} className="btn">
           Send message
         </button>
-        <button className="btn" style={{ marginLeft: "1em" }}>
+        <button
+          onClick={deleteContact}
+          className="btn"
+          style={{ marginLeft: "1em" }}
+        >
           Delete
         </button>
       </div>

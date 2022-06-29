@@ -99,6 +99,7 @@ min-height: 40em;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: 10px;
 }
 
 .btn:hover{

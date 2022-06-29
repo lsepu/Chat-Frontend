@@ -56,12 +56,12 @@ const Login = ({connectToSocket} : any) => {
     });
   };
 
-  useEffect(() => {
-    if (logged) {
-      connectToSocket();
-      //navigate("/chatroom/public");
-    }
-  }, [logged]);
+  // useEffect(() => {
+  //   if (logged) {
+  //     connectToSocket();
+  //     //navigate("/chatroom/public");
+  //   }
+  // }, [logged]);
 
   const loginUser = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>

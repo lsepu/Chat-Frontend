@@ -38,12 +38,13 @@ function App() {
           //postNewUser
           // console.log(userAuth);
           // console.log("is verified");
-          dispatch(
-            login({
-              email: userAuth.email,
-              contacts: ["lesepulveda@uninorte.edu.co"],
-            })
-          );
+
+          // dispatch(
+          // login({
+          //     email: userAuth.email,
+          //     contacts: ["lesepulveda@uninorte.edu.co"],
+          //   })
+          // );
 
           connectToSocket();
 
@@ -77,10 +78,8 @@ function App() {
 
   const onConnected = () => {
     stompClient.subscribe("/chatroom/public", onMessageReceived);
-    console.log("EMAIL");
-    console.log(user.email);
     stompClient.subscribe(
-      "/user/" + user.email + "/private",
+      "/user/" + auth.currentUser?.email + "/private",
       onPrivateMessage
     );
     userJoin();

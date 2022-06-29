@@ -96,9 +96,7 @@ export const updateUser = createAsyncThunk(
     );
 
     console.log("actualizar!");
-    return user as userType;
-    // console.log(response);
-    // return (await response.json()) as userType;
+    return (await response.json()) as userType;
 
   }
 );

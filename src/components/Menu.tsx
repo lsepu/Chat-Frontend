@@ -61,6 +61,13 @@ const Menu = ({ stompClient }: any) => {
         >
           Contacts
         </Link>
+        <Link
+          to="/channels"
+          style={{ textDecoration: "none", color: "black" }}
+          className="cardMenu-item"
+        >
+          Channels
+        </Link>
 
         {chat.privateChatNames.map((name, key) => (
           <Link to={`/chatroom/${name}`} key={key} className="cardMenu-item">{name}</Link>

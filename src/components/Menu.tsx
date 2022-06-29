@@ -6,7 +6,7 @@ import { auth } from "../firebase";
 import { postUser, selectUser, updateUser, userType } from "../state/features/userSlice";
 import { AppDispatch, stateType } from "../state/store";
 
-const Menu = () => {
+const Menu = ({ stompClient }: any) => {
   const navigate = useNavigate();
   const userState = useSelector(selectUser());
   const dispatch = useDispatch<AppDispatch>();

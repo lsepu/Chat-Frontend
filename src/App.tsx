@@ -54,6 +54,7 @@ function App() {
         }
       } else {
         dispatch(logout());
+        stompClient?.disconnect();
       }
       setLoading(false);
     });
@@ -180,7 +181,7 @@ function App() {
 
             <Route path="login" element={<Login connectToSocket={connectToSocket}/>} />
             <Route path="register" element={<Register />} />
-            <Route path="contacts" element={<Contacts />} />
+            <Route path="contacts" element={<Contacts connectToSocket={connectToSocket}/>} />
             <Route
               path="chatroom/:receiver"
               element={

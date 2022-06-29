@@ -2,8 +2,9 @@ import Menu from "../components/Menu";
 import { AppDispatch, stateType } from "../state/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { addOwnPrivateChatMessage } from "../state/features/chatSlice";
+import useOnScreen from "../actions/UserActions";
 
 interface IMessage {
   idSender: string;
@@ -13,6 +14,9 @@ interface IMessage {
   isSeen: boolean;
 }
 
+
+  
+
 const ChatRoom = ({ stompClient }: any) => {
   const { user } = useSelector((state: stateType) => state.user);
   const chat = useSelector((state: stateType) => state.chat);
@@ -21,6 +25,16 @@ const ChatRoom = ({ stompClient }: any) => {
   const [message, setMessage] = useState("");
 
   const dispatch = useDispatch<AppDispatch>();
+
+  //Esto es del observer
+  const ref = useRef(null);
+  const isVisible = useOnScreen(ref)
+  console.log(isVisible);
+  if(isVisible){
+    console.log("Voy a mandar notificacion porque vi chatcon "+ receiver)
+
+  }
+  //
 
   const sendValue = () => {
     console.log(stompClient);
@@ -66,7 +80,7 @@ const ChatRoom = ({ stompClient }: any) => {
         <Menu />
         <div className="content-main">
 
-          <div className="chat">
+          <div className="chat" ref={ref}>
             {receiver === "public"
               ? chat.publicChat.map((chat: any, index: number) => (
                   <p style={{ marginLeft: "10px" }} key={index}>

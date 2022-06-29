@@ -1,7 +1,8 @@
 import { signOut } from "firebase/auth";
-import  { useEffect } from "react";
+import  { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import useOnScreen from "../actions/UserActions";
 import { auth } from "../firebase";
 import { postUser, selectUser, updateUser, userType } from "../state/features/userSlice";
 import { AppDispatch, stateType } from "../state/store";
@@ -33,11 +34,11 @@ const Menu = ({ stompClient }: any) => {
   };
 
   useEffect(() => {
-    console.log(userLogged);
     if (!userLogged) {
       navigate("/login");
     }
   }, [logged]);
+
 
   return (
     <div>
@@ -63,7 +64,7 @@ const Menu = ({ stompClient }: any) => {
         </Link>
 
         {chat.privateChatNames.map((name, key) => (
-          <Link to={`/chatroom/${name}`} key={key} className="cardMenu-item">{name}</Link>
+          <Link to={`/chatroom/${name}`} key={key} className="cardMenu-item" >{name} </Link>
         ))}
       </div>
     </div>

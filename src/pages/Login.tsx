@@ -90,7 +90,8 @@ const Login = ({connectToSocket} : any) => {
           ipAddress: ip,
         };
 
-        dispatch(postUser(newUserAsUserType));
+      response = await dispatch(postUser(newUserAsUserType));
+
       }
 
       console.log("PRUEBAAA");

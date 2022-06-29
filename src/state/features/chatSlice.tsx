@@ -7,13 +7,13 @@ interface IHashMap {
 interface IChat {
   privateChats: IHashMap;
   publicChat: any[];
-  privateChatNames: string[]
+  privateChatNames: string[];
 }
 
 const initialState: IChat = {
   privateChats: {},
   publicChat: [],
-  privateChatNames: []
+  privateChatNames: [],
 };
 
 export const chatSlice = createSlice({
@@ -25,11 +25,13 @@ export const chatSlice = createSlice({
       state.privateChatNames.push(action.payload.email);
     },
     createPrivateChat: (state, action) => {
-      if(!state.privateChats[action.payload.data.idSender]){
+      if (!state.privateChats[action.payload.data.idSender]) {
         state.privateChats[action.payload.data.idSender] = action.payload.list;
         state.privateChatNames.push(action.payload.data.idSender);
-      } else{
-        state.privateChats[action.payload.data.idSender].push(action.payload.data);
+      } else {
+        state.privateChats[action.payload.data.idSender].push(
+          action.payload.data
+        );
       }
     },
     addPrivateChatMessage: (state, action) => {
@@ -44,11 +46,23 @@ export const chatSlice = createSlice({
     },
     addPublicChatMessage: (state, action) => {
       state.publicChat.push(action.payload.message);
-    }
+    },
+    getChatHistory: (state, action) => {
+      state.privateChats[action.payload.email] = [];
+      action.payload.chats.map((chat: any) => {
+        state.privateChats[action.payload.email].push(chat);
+      });
+    },
   },
 });
 
 export default chatSlice.reducer;
 
-export const { createPrivateChat, addPrivateChatMessage, initializeChat, addOwnPrivateChatMessage, addPublicChatMessage } =
-  chatSlice.actions;
+export const {
+  createPrivateChat,
+  addPrivateChatMessage,
+  initializeChat,
+  addOwnPrivateChatMessage,
+  addPublicChatMessage,
+  getChatHistory,
+} = chatSlice.actions;

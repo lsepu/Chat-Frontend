@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { initializeChat } from "../state/features/chatSlice";
+import { getChatHistory, initializeChat } from "../state/features/chatSlice";
 import { updateUser } from "../state/features/userSlice";
 import { AppDispatch, stateType } from "../state/store";
 
@@ -15,8 +15,19 @@ const ContactCard = ({ contact }: IContact) => {
   const navigate = useNavigate();
 
   //if there is no chat initialized
-  const startPrivateChat = () => {
-    if (!chat.privateChats[contact]) {
+  const startPrivateChat = async () => {
+    const chatHistory = await fetch(
+      `https://realtime-chat-app-sofkau.herokuapp.com/messages/private/${user.email}/${contact}`
+    );
+    if (chatHistory.status === 200) {
+      const chatHistoryFormatted = await chatHistory.json();
+      const data = {
+        chats: chatHistoryFormatted,
+        email: contact,
+      };
+
+      dispatch(getChatHistory(data));
+    } else {
       console.log("NUEVO CHAT");
       dispatch(
         initializeChat({
@@ -24,6 +35,7 @@ const ContactCard = ({ contact }: IContact) => {
         })
       );
     }
+
     navigate(`/chatroom/${contact}`);
   };
 

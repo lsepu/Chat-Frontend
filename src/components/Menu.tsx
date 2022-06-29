@@ -14,12 +14,13 @@ const Menu = () => {
 
 
 
-  const { logged }  = useSelector((state: stateType) => state.user);
-  const userLogged = useSelector((state: stateType) => state.user)
+  // const { logged }  = useSelector((state: stateType) => state.user);
+  const userLogged = useSelector((state: stateType) => state.user.logged)
 
   const logout = async() => {
 
     const updatedUserAsUserType: userType = {
+      id: `${userState.id}`,
       userName: `${userState.userName}`,
       email: `${userState.email}`,
       contacts: userState.contacts,
@@ -33,10 +34,11 @@ const Menu = () => {
   };
 
   useEffect(() => {
-    if (!logged) {
+    console.log(userLogged);
+    if (!userLogged) {
       navigate("/login");
     } 
-  }, [logged]);
+  }, [userLogged]);
 
   return (
     <div>

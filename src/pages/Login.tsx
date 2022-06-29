@@ -1,4 +1,9 @@
-import { inMemoryPersistence, setPersistence, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import {
+  inMemoryPersistence,
+  setPersistence,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { auth } from "../firebase";
@@ -7,15 +12,22 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, stateType } from "../state/store";
 import axios from "axios";
 // import { getUserByEmail, postNewUser, putUser } from "../actions/UserActions";
-import { getUser, postUser, userType, selectUser, updateUser, selectUserStatus, userFetchStatus } from "../state/features/userSlice";
-
+import {
+  getUser,
+  postUser,
+  userType,
+  selectUser,
+  updateUser,
+  selectUserStatus,
+  userFetchStatus,
+} from "../state/features/userSlice";
 
 const Login = () => {
   const userState = useSelector(selectUser());
   const userStatus = useSelector(selectUserStatus());
   const dispatch = useDispatch<AppDispatch>();
-
   const { logged } = useSelector((state: stateType) => state.user);
+
   const navigate = useNavigate();
 
   const [loginInput, setLoginInput] = useState({
@@ -23,18 +35,18 @@ const Login = () => {
     password: "",
   });
 
-  const [ip, setIP] = useState<string>('');
+  const [ip, setIP] = useState<string>("");
 
   //creating function to load ip address from the API
   const getData = async () => {
-    const res = await axios.get('https://geolocation-db.com/json/')
-    setIP(res.data.IPv4)
-  }
-  
-  useEffect( () => {
+    const res = await axios.get("https://geolocation-db.com/json/");
+    setIP(res.data.IPv4);
+  };
+
+  useEffect(() => {
     //passing getData method to the lifecycle method
-    getData()
-  }, [])
+    getData();
+  }, []);
 
   const setLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginInput({
@@ -49,11 +61,12 @@ const Login = () => {
   //   }
   // }, [logged]);
 
-  const loginUser = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const loginUser = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     e.preventDefault();
-    
+
     try {
-      
       const user = await signInWithEmailAndPassword(
         auth,
         loginInput.email.toString(),
@@ -61,57 +74,58 @@ const Login = () => {
       );
 
       // let userByEmail = await getUserByEmail(`${user.user.email}`);
-      await dispatch(getUser(`${user.user.email}`));
-      console.log(userStatus);
-      
-      if(userStatus === userFetchStatus.FAILED){
+      let response: any = await dispatch(getUser(`${user.user.email}`));
+
+      console.log(response.payload);
+
+      if (response.error) {
+        console.log("Voy a guardar el usuario");
         const newUserAsUserType: userType = {
           userName: `${user.user.email}`,
           email: `${user.user.email}`,
           contacts: [],
           isLogged: true,
-          ipAddress: ip
-        }
-        console.log("Voy a guardar el usuario");
-        
+          ipAddress: ip,
+        };
+
         dispatch(postUser(newUserAsUserType));
       }
-      
-      if(userState.isLogged && (userState.ipAddress !== ip)){
-        auth.signOut()
-        //navigate("/login")
-        window.alert("There is another sesion active")
-      }else{
-        console.log(userState);
-        
-        navigate("/chatroom")
+
+      console.log("PRUEBAAA");
+      console.log(ip);
+
+      if (response.payload!==500 && !response.payload.isLogged) {
+        console.log("ENTRE A ACTUALIZAR");
+        const userUpdated: userType = {
+          id: response.payload.id,
+          userName: response.payload.userName,
+          email: response.payload.email,
+          contacts: response.payload.contacts,
+          isLogged: true,
+          ipAddress: ip,
+        };
+        response = await dispatch(updateUser(userUpdated));
       }
 
-      
+      if (response.payload.isLogged && response.payload.ipAddress !== ip) {
+        auth.signOut();
+        //navigate("/login")
+        window.alert("There is another sesion active");
+      } else {
+        navigate("/chatroom");
+      }
 
       // userState.isLogged = true;
       // userState.ipAddress = ip;
       // const userLoggedStatusUpdated = await putUser(userState)
-      const userUpdated: userType = {
-          id: userState.id,
-          userName: userState.userName,
-          email: userState.email,
-          contacts: userState.contacts,
-          isLogged: true,
-          ipAddress: ip
-      }
-      dispatch(updateUser(userUpdated))
-      
 
-
-      
       setPersistence(auth, inMemoryPersistence).then(() => {
         // console.log("Hola");
-      })
+      });
     } catch (error) {
-        let message;
-        if (error instanceof Error) message = error.message;
-        reportError({ message });
+      let message;
+      if (error instanceof Error) message = error.message;
+      reportError({ message });
     }
   };
 

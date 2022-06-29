@@ -27,7 +27,7 @@ const Register = () => {
           navigate("/login");
           sendEmailVerification(user).then(() => {
             console.log("Email verification sent!");
-          }) 
+          })
         })
         .catch((error) => {
           const errorMessage = error.message;

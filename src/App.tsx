@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import Login from "./pages/Login";
 import { login, logout } from "./state/features/userSlice";
 import { AppDispatch, stateType } from "./state/store";
-
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import {
@@ -34,7 +33,11 @@ function App() {
     onAuthStateChanged(auth, (userAuth) => {
       if (userAuth) {
         if (userAuth.emailVerified) {
-          console.log("is verified");
+          //if userByEmail.status === 500
+          //userAsUserType
+          //postNewUser
+          // console.log(userAuth);
+          // console.log("is verified");
           dispatch(
             login({
               email: userAuth.email,

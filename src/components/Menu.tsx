@@ -1,22 +1,40 @@
 import { signOut } from "firebase/auth";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import  { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
-import { stateType } from "../state/store";
+import { postUser, selectUser, updateUser, userType } from "../state/features/userSlice";
+import { AppDispatch, stateType } from "../state/store";
 
 const Menu = () => {
   const navigate = useNavigate();
+  const userState = useSelector(selectUser());
+  const dispatch = useDispatch<AppDispatch>();
 
   const { logged } = useSelector((state: stateType) => state.user);
   const chat = useSelector((state: stateType) => state.chat);
 
-  const logout = () => {
+
+  // const { logged }  = useSelector((state: stateType) => state.user);
+  const userLogged = useSelector((state: stateType) => state.user.logged)
+
+  const logout = async() => {
+    const updatedUserAsUserType: userType = {
+      id: `${userState.id}`,
+      userName: `${userState.userName}`,
+      email: `${userState.email}`,
+      contacts: userState.contacts,
+      isLogged: false,
+      ipAddress: ""
+    }
+    dispatch(updateUser(updatedUserAsUserType));
     signOut(auth);
+    
   };
 
   useEffect(() => {
-    if (!logged) {
+    console.log(userLogged);
+    if (!userLogged) {
       navigate("/login");
     }
   }, [logged]);

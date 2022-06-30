@@ -23,21 +23,18 @@ const ChatRoom = ({ stompClient }: any) => {
 
   const { receiver } = useParams();
   const [message, setMessage] = useState("");
+  const[sendNoti, setSendNoti] = useState(true);
 
   const dispatch = useDispatch<AppDispatch>();
 
   //Esto es del observer
   const ref = useRef(null);
-  const isVisible = useOnScreen(ref)
-  console.log(isVisible);
-  if(isVisible){
-    console.log("Voy a mandar notificacion porque vi chatcon "+ receiver)
+  let isVisible = useOnScreen(ref);
+  console.log("isVisible 32: " +isVisible)
 
-  }
   //
 
   const sendValue = () => {
-    console.log(stompClient);
     if (stompClient) {
       var chatMessage: IMessage = {
         idSender: user.email,
@@ -52,8 +49,28 @@ const ChatRoom = ({ stompClient }: any) => {
     }
   };
 
+  const sendReadNotification = () => {
+    if (stompClient) {
+      var chatMessage: IMessage = {
+        idSender: user.email,
+        idReceiver: receiver,
+        message: "visto",
+        status: "NOTIFICATION",
+        isSeen: true,
+      };
+
+      dispatch(
+        addOwnPrivateChatMessage({
+          data: chatMessage,
+        })
+      );
+
+      stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+      setMessage("");
+    }
+  };
+
   const sendPrivateValue = () => {
-    console.log(stompClient);
     if (stompClient) {
       var chatMessage: IMessage = {
         idSender: user.email,
@@ -68,10 +85,30 @@ const ChatRoom = ({ stompClient }: any) => {
           data: chatMessage,
         })
       );
-
+      
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
       setMessage("");
+      setSendNoti(true);
     }
+  };
+
+  
+
+
+
+  if(isVisible && receiver === "public"){
+    console.log(user.email + " leyó mensaje publico")
+    isVisible = false;
+  } else if(isVisible && receiver!== undefined && sendNoti){
+    // console.log(user.email + " leyó tu mensaje,")
+    // console.log("isVisible before: " +isVisible)
+    // console.log("isVisible after: " +isVisible)
+    
+    setMessage(user.email + " leyó tu mensaje,")
+    sendReadNotification();
+    // isVisible = false;
+    setSendNoti(false);
+    
   };
 
   return (

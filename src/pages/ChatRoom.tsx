@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import { useRef, useState } from "react";
 import { addOwnPrivateChatMessage } from "../state/features/chatSlice";
 import useOnScreen from "../actions/UserActions";
+import { useInView } from "react-cool-inview";
+
 
 interface IMessage {
   idSender: string;
@@ -13,6 +15,10 @@ interface IMessage {
   status: string;
   isSeen: boolean;
 }
+
+
+
+
 
 
   
@@ -28,10 +34,9 @@ const ChatRoom = ({ stompClient }: any) => {
   const dispatch = useDispatch<AppDispatch>();
 
   //Esto es del observer
-  const ref = useRef(null);
-  let isVisible = useOnScreen(ref);
-  console.log("isVisible 32: " +isVisible)
-
+  // let ref = useRef(null);
+  // let isVisible = useOnScreen(ref);
+  // console.log("isVisible 32: " +isVisible)
   //
 
   const sendValue = () => {
@@ -96,20 +101,42 @@ const ChatRoom = ({ stompClient }: any) => {
 
 
 
-  if(isVisible && receiver === "public"){
-    console.log(user.email + " leyó mensaje publico")
-    isVisible = false;
-  } else if(isVisible && receiver!== undefined && sendNoti){
-    // console.log(user.email + " leyó tu mensaje,")
-    // console.log("isVisible before: " +isVisible)
-    // console.log("isVisible after: " +isVisible)
+  // if(isVisible && receiver === "public"){
+  //   console.log(user.email + " leyó mensaje publico")
+  //   isVisible = false;
+  // } else if(isVisible && receiver!== undefined){
+  //   // console.log(user.email + " leyó tu mensaje,")
+  //   // console.log("isVisible before: " +isVisible)
+  //   // console.log("isVisible after: " +isVisible)
     
-    setMessage(user.email + " leyó tu mensaje,")
-    sendReadNotification();
-    // isVisible = false;
-    setSendNoti(false);
-    
-  };
+  //   setMessage(user.email + " leyó tu mensaje,")
+  //   // sendReadNotification();
+  //   // isVisible = false;
+  //   // setSendNoti(false);
+  // };
+
+  const { observe, unobserve, inView, scrollDirection, entry } = useInView({
+    threshold: 0.25, // Default is 0
+    onChange: ({ inView, scrollDirection, entry, observe, unobserve }) => {
+      // Triggered whenever the target meets a threshold, e.g. [0.25, 0.5, ...]
+      console.log("On change inview:"+ inView)
+      // unobserve(); // To stop observing the current target element
+      observe(); // To re-start observing the current target element
+    },
+    onEnter: ({ scrollDirection, entry, observe, unobserve }) => {
+      console.log("On enter")
+      // unobserve(); // To re-start observing the current target element
+
+      // Triggered when the target enters the viewport
+    },
+    onLeave: ({ scrollDirection, entry, observe, unobserve }) => {
+      console.log("On leave")
+      unobserve(); // To stop observing the current target element
+
+      // Triggered when the target leaves the viewport
+    },
+    // More useful options...
+  });
 
   return (
     <div className="content-wrapper">
@@ -117,7 +144,7 @@ const ChatRoom = ({ stompClient }: any) => {
         <Menu />
         <div className="content-main">
 
-          <div className="chat" ref={ref}>
+          <div className="chat" ref={observe}>
             {receiver === "public"
               ? chat.publicChat.map((chat: any, index: number) => (
                   <p style={{ marginLeft: "10px" }} key={index}>

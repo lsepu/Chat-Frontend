@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { stateType } from "../store";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { stateType } from '../store';
 
 export type userType = {
   //Usuario
@@ -14,20 +14,20 @@ export type userType = {
 interface userState extends userType {}
 
 export enum userFetchStatus {
-  IDLE = "idle",
-  COMPLETED = "completed",
-  FAILED = "failed",
-  PENDING = "pending",
+  IDLE = 'idle',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+  PENDING = 'pending',
 }
 
 const initialState: IUser = {
   user: {
-    id: "",
-    userName: "",
-    email: "",
+    id: '',
+    userName: '',
+    email: '',
     contacts: [],
     isLogged: false,
-    ipAddress: "",
+    ipAddress: '',
   },
   logged: false,
   status: userFetchStatus.IDLE,
@@ -42,7 +42,7 @@ interface IUser {
 }
 
 export const getUser = createAsyncThunk(
-  "getUser",
+  'getUser',
   async (email: string, { rejectWithValue }) => {
     try {
       const response = await fetch(
@@ -61,14 +61,14 @@ export const getUser = createAsyncThunk(
 );
 
 export const postUser = createAsyncThunk(
-  "postUser",
+  'postUser',
   async (newUser: userType) => {
     const response = await fetch(
-      "https://realtime-chat-app-sofkau.herokuapp.com/user",
+      'https://realtime-chat-app-sofkau.herokuapp.com/user',
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-type": "application/json; charset=UTF-8",
+          'Content-type': 'application/json; charset=UTF-8',
         },
         body: JSON.stringify(newUser),
       }
@@ -78,31 +78,28 @@ export const postUser = createAsyncThunk(
 );
 
 export const updateUser = createAsyncThunk(
-  "updateUser",
+  'updateUser',
 
   async (user: userType) => {
-
     console.log(user);
 
     const response = await fetch(
       `https://realtime-chat-app-sofkau.herokuapp.com/user`,
       {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-type": "application/json; charset=UTF-8",
+          'Content-type': 'application/json; charset=UTF-8',
         },
         body: JSON.stringify(user),
       }
     );
 
-    console.log("actualizar!");
     return (await response.json()) as userType;
-
   }
 );
 
 export const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState,
   reducers: {
     login: (state, action) => {
@@ -127,7 +124,7 @@ export const userSlice = createSlice({
 
     builder.addCase(getUser.rejected, (state, action) => {
       state.status = userFetchStatus.FAILED;
-      state.error = "Something went wrong while fetching";
+      state.error = 'Something went wrong while fetching';
     });
 
     //post
@@ -143,7 +140,7 @@ export const userSlice = createSlice({
 
     builder.addCase(postUser.rejected, (state) => {
       state.status = userFetchStatus.FAILED;
-      state.error = "Something went wrong while fetching";
+      state.error = 'Something went wrong while fetching';
     });
 
     //put
@@ -152,23 +149,16 @@ export const userSlice = createSlice({
     });
 
     builder.addCase(updateUser.fulfilled, (state, action) => {
-      
-      console.log("ENTRE EN PUT");
-
       state.status = userFetchStatus.COMPLETED;
       state.user = action.payload;
       state.logged = action.payload.isLogged;
-
-      console.log(action.payload.isLogged);
-
     });
 
     builder.addCase(updateUser.rejected, (state) => {
-
-      console.log("falle en update");
+      console.log('falle en update');
 
       state.status = userFetchStatus.FAILED;
-      state.error = "Something went wrong while fetching";
+      state.error = 'Something went wrong while fetching';
     });
   },
 });

@@ -82,7 +82,7 @@ export const updateUser = createAsyncThunk(
 
   async (user: userType) => {
 
-    console.log(user);
+    //console.log(user);
 
     const response = await fetch(
       `https://realtime-chat-app-sofkau.herokuapp.com/user`,
@@ -110,6 +110,7 @@ export const userSlice = createSlice({
       state.user = action.payload;
     },
     logout: (state) => {
+      console.log("adentro de Logout")
       state.logged = false;
     },
   },

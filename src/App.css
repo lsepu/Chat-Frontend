@@ -100,6 +100,9 @@ min-height: 40em;
   align-items: center;
   justify-content: space-between;
   margin-top: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .btn:hover{
@@ -115,6 +118,9 @@ min-height: 40em;
   cursor: pointer;
   text-decoration: none;
   color: black;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 

@@ -1,5 +1,6 @@
 import {
   inMemoryPersistence,
+  onAuthStateChanged,
   setPersistence,
   signInWithEmailAndPassword,
   signOut,
@@ -63,9 +64,7 @@ const Login = ({connectToSocket} : any) => {
   //   }
   // }, [logged]);
 
-  const loginUser = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const loginUser = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
     try {
@@ -93,11 +92,11 @@ const Login = ({connectToSocket} : any) => {
         response = await dispatch(postUser(newUserAsUserType));
       }
 
-      console.log("PRUEBAAA");
+      //console.log("PRUEBAAA");
       console.log(ip);
 
       if (response.payload!==500 && !response.payload.isLogged) {
-        console.log("ENTRE A ACTUALIZAR");
+        //console.log("ENTRE A ACTUALIZAR");
         const userUpdated: userType = {
           id: response.payload.id,
           userName: response.payload.userName,
@@ -111,12 +110,18 @@ const Login = ({connectToSocket} : any) => {
 
       if (response.payload.isLogged && response.payload.ipAddress !== ip) {
         auth.signOut();
-        //navigate("/login")
         window.alert("There is another sesion active");
       } else {
-        navigate("/chatroom/public");
-      }
-
+          onAuthStateChanged(auth, (userAuth) => {
+          if (!userAuth?.emailVerified) {
+          console.log("NO ESTÁ VERIFICADO");
+          navigate("/login");
+          } else {
+            // connectToSocket();
+            navigate("/chatroom/public");
+          }
+        }
+      )}
       // userState.isLogged = true;
       // userState.ipAddress = ip;
       // const userLoggedStatusUpdated = await putUser(userState)
@@ -125,6 +130,7 @@ const Login = ({connectToSocket} : any) => {
         // console.log("Hola");
       });
     } catch (error) {
+      window.alert("Not able to login with the provided credentials");
       let message;
       if (error instanceof Error) message = error.message;
       reportError({ message });
@@ -158,7 +164,7 @@ const Login = ({connectToSocket} : any) => {
           <p>
             New to the app? <Link to="/register">Create an account</Link>
           </p>
-          <button onClick={loginUser} className="btn btn--login">
+          <button onClick={(e) => loginUser(e)} className="btn btn--login">
             Log In
           </button>
         </form>

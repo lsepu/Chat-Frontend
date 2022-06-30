@@ -73,7 +73,7 @@ const ChatRoom = ({ stompClient }: any) => {
                     <b>{chat.idSender}</b> : {chat.message}{" "}
                   </p>
                 ))
-              : receiver !== undefined &&
+              : (receiver !== undefined && chat.privateChats[receiver]) &&
                 chat.privateChats[receiver].map((chat: any, index: number) => (
                   <p style={{ marginLeft: "10px" }} key={index}>
                     <b>{chat.idSender}</b> : {chat.message}{" "}

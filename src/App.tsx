@@ -27,6 +27,7 @@ var stompClient: any = null;
 function App() {
   const dispatch = useDispatch<AppDispatch>();
   const { logged, user } = useSelector((state: stateType) => state.user);
+  const [userLogged, setUserLogged] = useState(logged);
   const [isLoading, setLoading] = useState(true);
   
 
@@ -34,27 +35,16 @@ function App() {
     onAuthStateChanged(auth, (userAuth) => {
       if (userAuth) {
         if (userAuth.emailVerified) {
-          //if userByEmail.status === 500
-          //userAsUserType
-          //postNewUser
-          // console.log(userAuth);
-          // console.log("is verified");
-
-          // dispatch(
-          // login({
-          //     email: userAuth.email,
-          //     contacts: ["lesepulveda@uninorte.edu.co"],
-          //   })
-          // );
-
+          console.log("Email verificado");
           connectToSocket();
-
         } else {
           handleShow();
-          signOut(auth);
+          auth.signOut();
         }
       } else {
-        dispatch(logout());
+        console.log("Logout antes: ", logged)
+        dispatch(logout);
+        console.log("Logout despues: ", logged)
         stompClient?.disconnect();
       }
       setLoading(false);
@@ -69,7 +59,7 @@ function App() {
   const [privateChats, setPrivateChats] = useState(new Map());
 
   const chat = useSelector((state: stateType) => state.chat);
-  console.log(chat);
+  //console.log(chat);
   // console.log(receiver);
 
   const connectToSocket = () => {

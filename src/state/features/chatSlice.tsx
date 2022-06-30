@@ -49,9 +49,13 @@ export const chatSlice = createSlice({
     },
     getChatHistory: (state, action) => {
       state.privateChats[action.payload.email] = [];
+      console.log(action.payload)
       action.payload.chats.map((chat: any) => {
         state.privateChats[action.payload.email].push(chat);
       });
+      if(!state.privateChatNames.includes(action.payload.email)){
+        state.privateChatNames.push(action.payload.email);
+      }
     },
   },
 });

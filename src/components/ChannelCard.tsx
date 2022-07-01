@@ -2,7 +2,7 @@ import { channelType } from "../state/features/channelSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { stateType, AppDispatch } from "../state/store";
 import { deleteChannel } from "../state/features/channelSlice";
-import { joinChannel } from "../state/features/chatSlice";
+import { joinChannel, removeChannelCard } from "../state/features/chatSlice";
 import { useNavigate } from "react-router-dom";
 
 const ChannelCard = ({ id, name, description }: channelType) => {
@@ -10,7 +10,6 @@ const ChannelCard = ({ id, name, description }: channelType) => {
   const navigate = useNavigate();
 
   const handleDeleteChannels = (id: string | undefined) => {
-    console.log(id);
     dispatch(deleteChannel(id));
   };
 

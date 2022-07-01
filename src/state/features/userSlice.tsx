@@ -82,8 +82,6 @@ export const updateUser = createAsyncThunk(
 
   async (user: userType) => {
 
-    //console.log(user);
-
     const response = await fetch(
       `https://realtime-chat-app-sofkau.herokuapp.com/user`,
       {
@@ -95,7 +93,6 @@ export const updateUser = createAsyncThunk(
       }
     );
 
-    console.log("actualizar!");
     return (await response.json()) as userType;
 
   }
@@ -110,7 +107,6 @@ export const userSlice = createSlice({
       state.user = action.payload;
     },
     logout: (state) => {
-      console.log("adentro de Logout")
       state.logged = false;
     },
   },
@@ -154,19 +150,15 @@ export const userSlice = createSlice({
 
     builder.addCase(updateUser.fulfilled, (state, action) => {
       
-      console.log("ENTRE EN PUT");
 
       state.status = userFetchStatus.COMPLETED;
       state.user = action.payload;
       state.logged = action.payload.isLogged;
 
-      console.log(action.payload.isLogged);
 
     });
 
     builder.addCase(updateUser.rejected, (state) => {
-
-      console.log("falle en update");
 
       state.status = userFetchStatus.FAILED;
       state.error = "Something went wrong while fetching";

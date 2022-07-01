@@ -31,7 +31,6 @@ const Channels = () => {
   useEffect(() => {
     if (channelStatus === channelFetchStatus.IDLE) {
       dispatch(getAllChannels());
-      console.log(dispatch(getAllChannels()));
     }
   }, []);
 

@@ -18,7 +18,6 @@ const Contacts = ({ stompClient }: any) => {
     const response = await fetch(
       `https://realtime-chat-app-sofkau.herokuapp.com/user/userEmail/${email}`
     );
-    console.log(response.status);
     if (response.status === 200) {
       const formatedResponse = await response.json();
       const emailReceived = formatedResponse.email;

@@ -28,7 +28,6 @@ const ContactCard = ({ contact }: IContact) => {
 
       dispatch(getChatHistory(data));
     } else {
-      console.log("NUEVO CHAT");
       dispatch(
         initializeChat({
           email: contact,

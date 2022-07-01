@@ -60,16 +60,17 @@ export const chatSlice = createSlice({
     },
 
     joinChannel : (state, action) =>{
-      console.log("ENTRE A CANAL");
       if(!state.channelChat[action.payload.name]){
         state.channelChat[action.payload.name] = [];
         state.channelChatNames.push(action.payload.name);
       }
     },
 
+    removeChannelCard: (state, action) =>{
+      state.channelChatNames = state.channelChatNames.filter((name) => name!==action.payload);
+    },
+
     addChannelMessage: (state, action) => {
-      console.log("MANDE MENSAJE A CANAL")
-      console.log(action.payload);
       state.channelChat[action.payload.payloadData.idReceiver].push(action.payload.payloadData);
     },
 
@@ -79,7 +80,6 @@ export const chatSlice = createSlice({
 
     getChatHistory: (state, action) => {
       state.privateChats[action.payload.email] = [];
-      console.log(action.payload)
       action.payload.chats.map((chat: any) => {
         state.privateChats[action.payload.email].push(chat);
       });
@@ -100,5 +100,5 @@ export const {
   addPublicChatMessage,
   getChatHistory,
   initializeChannelChat,
-  joinChannel, addChannelMessage, clearChats
+  joinChannel, addChannelMessage, clearChats, removeChannelCard
 } = chatSlice.actions;

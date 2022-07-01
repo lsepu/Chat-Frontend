@@ -39,7 +39,6 @@ const Menu = ({ stompClient }: any) => {
   };
 
   useEffect(() => {
-    console.log("SOY EL USEFFECT: ", userLogged);
     if (!userLogged) {
       navigate("/login");
     }

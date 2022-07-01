@@ -33,7 +33,6 @@ const initialState: IChannel = {
 
 export const getAllChannels = createAsyncThunk('getAllChannels', async () => {
     const response = await fetch(URL_BASE+"/channel")
-    console.log(response)
     return (await response.json()) as channelType[]
 })
 
@@ -58,7 +57,6 @@ export const updateChannel = createAsyncThunk(
     "updateChannel",
 
     async (channel: channelType) => {
-        console.log(channel);
 
         const response = await fetch(
             URL_BASE+"/channel",
@@ -70,8 +68,6 @@ export const updateChannel = createAsyncThunk(
                 body: JSON.stringify(channel),
             }
         );
-
-        console.log("actualizar!");
         return channel as channelType;
         // console.log(response);
         // return (await response.json()) as channelType;
@@ -128,13 +124,11 @@ export const channelSSlice = createSlice({
         });
 
         builder.addCase(updateChannel.fulfilled, (state, action) => {
-            console.log("ENTRE EN PUT");
             state.status = channelFetchStatus.COMPLETED;
             //state.channel = action.payload;
         });
 
         builder.addCase(updateChannel.rejected, (state) => {
-            console.log("falle en update");
 
             state.status = channelFetchStatus.FAILED;
             state.error = "Something went wrong while fetching";
@@ -146,13 +140,11 @@ export const channelSSlice = createSlice({
         });
 
         builder.addCase(deleteChannel.fulfilled, (state, action) => {
-            console.log("ENTRE EN DELETE");
             state.status = channelFetchStatus.COMPLETED;
-            state.channel = state.channel.filter((channel) => channel.id  !== action.payload)
+            state.channel = state.channel.filter((channel) => channel.id  !== action.payload);
         });
 
         builder.addCase(deleteChannel.rejected, (state) => {
-            console.log("falle en DELETE");
             state.status = channelFetchStatus.FAILED;
             state.error = "Something went wrong while fetching";
         });

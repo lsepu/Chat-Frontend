@@ -78,10 +78,10 @@ const Login = ({connectToSocket} : any) => {
       // let userByEmail = await getUserByEmail(`${user.user.email}`);
       let response: any = await dispatch(getUser(`${user.user.email}`));
 
-      console.log(response.payload);
+      // console.log(response.payload);
 
       if (response.error) {
-        console.log("Voy a guardar el usuario");
+        // console.log("Voy a guardar el usuario");
         const newUserAsUserType: userType = {
           userName: `${user.user.email}`,
           email: `${user.user.email}`,
@@ -94,7 +94,7 @@ const Login = ({connectToSocket} : any) => {
       }
 
       //console.log("PRUEBAAA");
-      console.log(ip);
+      // console.log(ip);
 
       if (response.payload!==500 && !response.payload.isLogged) {
         //console.log("ENTRE A ACTUALIZAR");
@@ -115,7 +115,7 @@ const Login = ({connectToSocket} : any) => {
       } else {
           onAuthStateChanged(auth, (userAuth) => {
           if (!userAuth?.emailVerified) {
-          console.log("NO ESTÁ VERIFICADO");
+          // console.log("NO ESTÁ VERIFICADO");
           navigate("/login");
           } else {
             // connectToSocket();

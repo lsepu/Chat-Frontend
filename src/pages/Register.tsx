@@ -72,7 +72,7 @@ const Register = () => {
             value={password}
             // pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
             pattern = "^(?:(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]))|(?:(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[]:;<>,.?/~_+-=|\]))|(?:(?=.*[0-9])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[]:;<>,.?/~_+-=|\]))|(?:(?=.*[0-9])(?=.*[a-z])(?=.*[*.!@$%^&(){}[]:;<>,.?/~_+-=|\]))).{8,32}$"
-            title="La contraseña debe contener mínimo 8 caracteres alfanuméricos en combinación de mayúsculas, minúsculas y por lo menos dos caracteres especiales. (abc123$$)"
+            title="La contraseña debe contener mínimo 8 caracteres alfanuméricos en combinación de mayúsculas, minúsculas y por lo menos 1 caracter especial. (abc123$$)"
             required
           />
 

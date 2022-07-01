@@ -33,7 +33,7 @@ const ChatRoom = ({ stompClient }: any) => {
         isSeen: false,
       };
 
-      stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+      stompClient.send("/app/channel/general", {}, JSON.stringify(chatMessage));
       setMessage("");
     }
   };

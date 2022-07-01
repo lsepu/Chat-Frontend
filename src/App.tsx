@@ -78,6 +78,7 @@ function App() {
   };
 
   const onMessageReceived = (payload: any) => {
+    console.log("ENVIO MENSAJE");
     var payloadData = JSON.parse(payload.body);
     switch (payloadData.status) {
       case "JOIN":
@@ -139,7 +140,7 @@ function App() {
       status: "JOIN",
       isSeen: false,
     };
-    stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+    stompClient.send("/app/channel/general", {}, JSON.stringify(chatMessage));
   };
 
   const onError = (err: any) => {

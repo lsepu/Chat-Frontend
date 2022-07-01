@@ -17,29 +17,37 @@ const ChatRoom = ({ stompClient }: any) => {
   const { user } = useSelector((state: stateType) => state.user);
   const chat = useSelector((state: stateType) => state.chat);
 
-  const { receiver } = useParams();
+  const { receiver, channel } = useParams();
   const [message, setMessage] = useState("");
+
+  // console.log(channel);
+  // console.log(chat.channelChat[`${channel}`]);
 
   const dispatch = useDispatch<AppDispatch>();
 
   const sendValue = () => {
-    console.log(stompClient);
+    // console.log(stompClient);
     if (stompClient) {
       var chatMessage: IMessage = {
         idSender: user.email,
-        idReceiver: "general",
+        idReceiver: channel,
         message: message,
         status: "MESSAGE",
         isSeen: false,
       };
 
+      // stompClient.send(
+      //   `/app/channel/${channel}`,
+      //   {},
+      //   JSON.stringify(chatMessage)
+      // );
       stompClient.send("/app/channel/general", {}, JSON.stringify(chatMessage));
       setMessage("");
     }
   };
 
   const sendPrivateValue = () => {
-    console.log(stompClient);
+    // console.log(stompClient);
     if (stompClient) {
       var chatMessage: IMessage = {
         idSender: user.email,
@@ -65,22 +73,21 @@ const ChatRoom = ({ stompClient }: any) => {
       <div className="content-division">
         <Menu />
         <div className="content-main">
-
           <div className="chat">
-            {receiver === "public"
-              ? chat.publicChat.map((chat: any, index: number) => (
+            {channel && chat.channelChat[channel]
+              ? chat.channelChat[channel].map((chat: any, index: number) => (
                   <p style={{ marginLeft: "10px" }} key={index}>
                     <b>{chat.idSender}</b> : {chat.message}{" "}
                   </p>
                 ))
-              : (receiver !== undefined && chat.privateChats[receiver]) &&
+              : receiver !== undefined &&
+                chat.privateChats[receiver] &&
                 chat.privateChats[receiver].map((chat: any, index: number) => (
                   <p style={{ marginLeft: "10px" }} key={index}>
                     <b>{chat.idSender}</b> : {chat.message}{" "}
                   </p>
                 ))}
           </div>
-
 
           <div className="send-message">
             <input
@@ -92,7 +99,7 @@ const ChatRoom = ({ stompClient }: any) => {
               onChange={(e) => setMessage(e.target.value)}
             />
             <button
-              onClick={receiver === "public" ? sendValue : sendPrivateValue}
+              onClick={channel ? sendValue : sendPrivateValue}
               className="btn"
             >
               Send

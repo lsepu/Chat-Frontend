@@ -84,6 +84,8 @@ h1{
   flex-direction: column;
 }
 
+
+
 .content-main{
   margin-left: 3em;
   padding: 2em 5em;
@@ -115,6 +117,7 @@ min-height: 40em;
   min-width: 15em;
   text-align: center;
   background-color: rgb(146, 205, 245);
+  color: rgb(91, 209, 160);
   cursor: pointer;
   text-decoration: none;
   color: black;

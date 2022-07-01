@@ -16,12 +16,12 @@ import { AppDispatch, stateType } from "./state/store";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import {
+  addChannelMessage,
   addPrivateChatMessage,
   addPublicChatMessage,
   createPrivateChat,
+  initializeChannelChat,
 } from "./state/features/chatSlice";
-
-
 
 var stompClient: any = null;
 function App() {
@@ -29,7 +29,6 @@ function App() {
   const { logged, user } = useSelector((state: stateType) => state.user);
   const [userLogged, setUserLogged] = useState(logged);
   const [isLoading, setLoading] = useState(true);
-  
 
   useEffect(() => {
     onAuthStateChanged(auth, (userAuth) => {
@@ -42,9 +41,9 @@ function App() {
           auth.signOut();
         }
       } else {
-        console.log("Logout antes: ", logged)
-        dispatch(logout);
-        console.log("Logout despues: ", logged)
+        console.log("Logout antes: ", logged);
+        dispatch(logout());
+        console.log("Logout despues: ", logged);
         stompClient?.disconnect();
       }
       setLoading(false);
@@ -78,7 +77,7 @@ function App() {
   };
 
   const onMessageReceived = (payload: any) => {
-    console.log("ENVIO MENSAJE");
+    console.log("ENVIO MENSAJE!!");
     var payloadData = JSON.parse(payload.body);
     switch (payloadData.status) {
       case "JOIN":
@@ -86,8 +85,8 @@ function App() {
         break;
       case "MESSAGE":
         dispatch(
-          addPublicChatMessage({
-            message: payloadData,
+          addChannelMessage({
+            payloadData,
           })
         );
         break;
@@ -167,13 +166,22 @@ function App() {
             <Route
               path="/"
               element={
-                <Navigate to={logged ? "/chatroom/public" : "/login"} replace />
+                <Navigate
+                  to={logged ? "/chatroom/channel/general" : "/login"}
+                  replace
+                />
               }
             />
 
-            <Route path="login" element={<Login connectToSocket={connectToSocket}/>} />
+            <Route
+              path="login"
+              element={<Login connectToSocket={connectToSocket} />}
+            />
             <Route path="register" element={<Register />} />
-            <Route path="contacts" element={<Contacts connectToSocket={connectToSocket}/>} />
+            <Route
+              path="contacts"
+              element={<Contacts connectToSocket={connectToSocket} />}
+            />
             <Route path="channels" element={<Channels />} />
             <Route
               path="chatroom/:receiver"
@@ -184,6 +192,17 @@ function App() {
                 />
               }
             />
+
+            <Route
+              path="chatroom/channel/:channel"
+              element={
+                <ChatRoom
+                  privateChats={privateChats}
+                  stompClient={stompClient}
+                />
+              }
+            />
+
             <Route
               path="*"
               element={

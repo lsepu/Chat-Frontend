@@ -22,6 +22,7 @@ import {
   selectUserStatus,
   userFetchStatus,
 } from "../state/features/userSlice";
+import { initializeChannelChat } from "../state/features/chatSlice";
 
 
 const Login = ({connectToSocket} : any) => {
@@ -118,7 +119,8 @@ const Login = ({connectToSocket} : any) => {
           navigate("/login");
           } else {
             // connectToSocket();
-            navigate("/chatroom/public");
+            dispatch(initializeChannelChat());
+            navigate("/chatroom/channel/general");
           }
         }
       )}

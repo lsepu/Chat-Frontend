@@ -30,16 +30,29 @@ const Channels = () => {
 
   useEffect(() => {
     if (channelStatus === channelFetchStatus.IDLE) {
-      dispatch(getAllChannels())
-      console.log(dispatch(getAllChannels()))
+      dispatch(getAllChannels());
+      console.log(dispatch(getAllChannels()));
     }
-  }, [])
+  }, []);
 
-  const handleAddChannels = () =>{
-    if(channelDescription! && channelName!){
-      const canal={name:channelName,description:channelDescription}
-      dispatch(postChannel(canal));
-      handleClose();
+  const handleAddChannels = async () => {
+    const channels = await fetch(
+      "https://realtime-chat-app-sofkau.herokuapp.com/channel/"
+    );
+    const channelsJson = await channels.json();
+
+    const found = channelsJson.find((channel : any) => channel.name === channelName);
+
+    if (!found) {
+      if (channelDescription! && channelName!) {
+        const canal = { name: channelName, description: channelDescription };
+        dispatch(postChannel(canal));
+        handleClose();
+        setChannelDescription("");
+        setChannelName("");
+      }
+    } else {
+      alert("A channel with that name already exists");
     }
   };
 
@@ -50,18 +63,17 @@ const Channels = () => {
         <div className="content-main">
           <h1 style={{ textAlign: "center" }}>Canales</h1>
           <>
-            {!channelError && channelState.map((channel) => {
-              return (
-                <ChannelCard
-                  key={channel.id}
-                  name={channel.name}
-                  description={channel.description}
-                  id={channel.id}
-                />
-              );
-            }
-            )
-            }
+            {!channelError &&
+              channelState.map((channel) => {
+                return (
+                  <ChannelCard
+                    key={channel.id}
+                    name={channel.name}
+                    description={channel.description}
+                    id={channel.id}
+                  />
+                );
+              })}
           </>
           <button
             style={{ float: "right" }}
@@ -78,24 +90,28 @@ const Channels = () => {
               <Form>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Nombre</Form.Label>
-                  <Form.Control type="text" 
-                  placeholder="Nombre"
-                   value={channelName}
+                  <Form.Control
+                    type="text"
+                    placeholder="Nombre"
+                    value={channelName}
                     onChange={(e) => setChannelName(e.target.value)}
-                    required/>
+                    required
+                  />
                 </Form.Group>
               </Form>
               <Form>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Descripcion</Form.Label>
-                  <Form.Control type="text"
-                   placeholder="Descripcion"
+                  <Form.Control
+                    type="text"
+                    placeholder="Descripcion"
                     as="textarea"
-                     rows={3}
-                      maxLength={2000}
-                       value={channelDescription}
-                        onChange={(e) => setChannelDescription(e.target.value)}
-                        required/>
+                    rows={3}
+                    maxLength={2000}
+                    value={channelDescription}
+                    onChange={(e) => setChannelDescription(e.target.value)}
+                    required
+                  />
                 </Form.Group>
               </Form>
             </Modal.Body>

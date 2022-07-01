@@ -27,24 +27,14 @@ function App() {
   const dispatch = useDispatch<AppDispatch>();
   const { logged, user } = useSelector((state: stateType) => state.user);
   const [isLoading, setLoading] = useState(true);
+  const [connectionAvailable, setConnectionAvailable] = useState(false);
+
   
 
   useEffect(() => {
     onAuthStateChanged(auth, (userAuth) => {
       if (userAuth) {
         if (userAuth.emailVerified) {
-          //if userByEmail.status === 500
-          //userAsUserType
-          //postNewUser
-          // console.log(userAuth);
-          // console.log("is verified");
-
-          // dispatch(
-          // login({
-          //     email: userAuth.email,
-          //     contacts: ["lesepulveda@uninorte.edu.co"],
-          //   })
-          // );
 
           connectToSocket();
 
@@ -72,10 +62,12 @@ function App() {
   // console.log(receiver);
 
   const connectToSocket = () => {
-    let Sock = new SockJS("https://realtime-chat-app-sofkau.herokuapp.com//ws");
+    let Sock = new SockJS("http://localhost:3000");
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
+
+
 
   const onConnected = () => {
     stompClient.subscribe("/chatroom/public", onMessageReceived);
@@ -84,7 +76,15 @@ function App() {
       onPrivateMessage
     );
     userJoin();
+    setConnectionAvailable(true);
+
+    console.log("Ya esta la conexion establecida")
+    return ;
   };
+
+
+
+
 
   const onMessageReceived = (payload: any) => {
     var payloadData = JSON.parse(payload.body);
@@ -188,6 +188,7 @@ function App() {
                 <ChatRoom
                   privateChats={privateChats}
                   stompClient={stompClient}
+                  onConnected ={()=>{connectionAvailable}}
                 />
               }
             />

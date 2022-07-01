@@ -2,7 +2,7 @@ import Menu from "../components/Menu";
 import { AppDispatch, stateType } from "../state/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { addOwnPrivateChatMessage } from "../state/features/chatSlice";
 import useOnScreen from "../actions/UserActions";
 import { useInView } from "react-cool-inview";
@@ -24,6 +24,8 @@ const ChatRoom = ({ stompClient }: any) => {
   const { receiver } = useParams();
   const [message, setMessage] = useState('');
   const dispatch = useDispatch<AppDispatch>();
+  const { connectionAvailable } = useParams();
+
 
 
   //Esto es del observer
@@ -31,9 +33,29 @@ const ChatRoom = ({ stompClient }: any) => {
 
   const ref = useRef(null);
   let isVisible = useOnScreen(ref);
-  console.log("IsVisible true")
-  
   //
+
+  // const [lastReceiver, setLastReceiver] = useState<string | undefined>('');
+  const firstUpdate = useRef(true);
+  useLayoutEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+  })
+
+  useEffect(() => {
+    // setLastReceiver(receiver);
+    console.log(`stompClient: ${stompClient}`);
+    console.log(`connectionAvailable: ${connectionAvailable}`);
+    setTimeout(() => {
+      if (stompClient && !firstUpdate.current) {
+          console.log(user.email + " leyó tu mensaje por useEffect," + receiver)
+          sendReadNotification()
+          firstUpdate.current = false;
+        }
+    }, 10000);
+  }, [receiver, chat.privateChats[`${receiver}`]]);
 
 
   const sendValue = () => {
@@ -56,24 +78,23 @@ const ChatRoom = ({ stompClient }: any) => {
       var chatMessage: IMessage = {
         idSender: user.email,
         idReceiver: receiver,
-        message: 'Your message has been read',
-        status: 'MESSAGE',
+        message: `Your message has been read ${receiver}`,
+        status: 'NOTIFICATION',
         isSeen: true,
       };
 
-      dispatch(
-        addOwnPrivateChatMessage({
-          data: chatMessage,
-        })
-      );
+      if(receiver === "public"){
+      stompClient.send('/app/message', {}, JSON.stringify(chatMessage));
+      } else{
+        dispatch(
+          addOwnPrivateChatMessage({
+            data: chatMessage,
+          })
+          );
+        stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+      }
 
       
-        stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-      
-      // useEffect(()=>{
-      //   console.log("IsVisible false")
-      //     let isVisible = false;
-      //   },[chat])
       setMessage("");
     }
   };
@@ -98,20 +119,8 @@ const ChatRoom = ({ stompClient }: any) => {
       setMessage("");
     }
   };
- 
-  if(isVisible && receiver === "public"){
-    console.log(user.email + " leyó mensaje publico")
-    isVisible = false;
-  } else if(isVisible && receiver!== undefined){
-    console.log(user.email + " leyó tu mensaje," + receiver)
-    // console.log("isVisible before: " +isVisible)
-    // console.log("isVisible after: " +isVisible)
-    
-    // setMessage(user.email + " leyó tu mensaje,")
-    // sendReadNotification();
-    // isVisible = false;
-    // setSendNoti(false);
-  };
+
+
 
 
 
@@ -133,7 +142,12 @@ const ChatRoom = ({ stompClient }: any) => {
               : receiver !== undefined &&
                 chat.privateChats[receiver].map((chat: any, index: number) => (
                   <p style={{ marginLeft: '10px' }} key={index}>
-                    <b>{chat.idSender}</b> : {chat.message}{' '}
+                    {chat.status === 'NOTIFICATION' && ?
+                    <b className="text-info">&#2713;</b>
+                    //Dispatch => Mandarle chatIdSender, en el chatSlice crear el
+                    :
+                    <><b>{chat.idSender}</b> : {chat.message}{' '}</>
+                  }
                   </p>
                 ))}
           </div>

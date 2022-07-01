@@ -81,7 +81,6 @@ export const updateUser = createAsyncThunk(
   'updateUser',
 
   async (user: userType) => {
-    console.log(user);
 
     const response = await fetch(
       `https://realtime-chat-app-sofkau.herokuapp.com/user`,
@@ -155,7 +154,6 @@ export const userSlice = createSlice({
     });
 
     builder.addCase(updateUser.rejected, (state) => {
-      console.log('falle en update');
 
       state.status = userFetchStatus.FAILED;
       state.error = 'Something went wrong while fetching';

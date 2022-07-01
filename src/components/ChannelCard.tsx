@@ -1,4 +1,4 @@
-import { channelType, updateChannel } from "../state/features/channelSlice";
+import { channelType, selectChannel, updateChannel } from "../state/features/channelSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { stateType, AppDispatch } from "../state/store";
 import { deleteChannel } from "../state/features/channelSlice";
@@ -14,6 +14,8 @@ const ChannelCard = ({ id, name, description }: channelType) => {
   const navigate = useNavigate();
   const [showEdit, setShowEdit] = useState(false);
   const [channelDescription, setChannelDescription] = useState("");
+  const [channelName, setChannelName] = useState("");
+  const channelState = useSelector(selectChannel());
 
   const handleDeleteChannels = (id: string | undefined) => {
     dispatch(deleteChannel(id));
@@ -31,16 +33,26 @@ const ChannelCard = ({ id, name, description }: channelType) => {
 
   };
 
+
   const handleEdit = () => {
-    const channelUpdated = {
-      id: id,
-      name: name,
-      description: channelDescription
+
+    const found = channelState.find((channel) => channel.name === channelName);
+
+    if(!found){
+      const channelUpdated = {
+        id: id,
+        name: channelName,
+        description: channelDescription
+      }
+      dispatch(updateChannel(channelUpdated));
+      alert("canal actualizado");
+      setShowEdit(false);
+      setChannelDescription("");
+      setChannelName("");
+    } else{
+      alert("Ya existe un canal con ese nombre");
     }
-    dispatch(updateChannel(channelUpdated));
-    alert("La descripción del canal ha sido actualizada");
-    setShowEdit(false);
-    setChannelDescription("");
+
   }
 
   return (
@@ -70,9 +82,21 @@ const ChannelCard = ({ id, name, description }: channelType) => {
 
     <Modal show={showEdit} onHide={() => setShowEdit(false)}>
             <Modal.Header closeButton>
-              <Modal.Title>Editar descripción del canal</Modal.Title>
+              <Modal.Title>Editar canal</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+            <Form>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <Form.Label>Nombre</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Nombre"
+                    value={channelName}
+                    onChange={(e) => setChannelName(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+              </Form>
               <Form>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Descripcion</Form.Label>

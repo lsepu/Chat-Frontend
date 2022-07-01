@@ -25,6 +25,7 @@ const ChatRoom = ({ stompClient }: any) => {
   const [message, setMessage] = useState('');
   const dispatch = useDispatch<AppDispatch>();
   const { connectionAvailable } = useParams();
+  const [tabHasFocus, setTabHasFocus] = useState(true);
 
 
 
@@ -45,16 +46,33 @@ const ChatRoom = ({ stompClient }: any) => {
   })
 
   useEffect(() => {
+
+    const handleFocus = () => {
+      console.log('Tab has focus');
+      setTabHasFocus(true);
+    };
+
+    const handleBlur = () => {
+      console.log('Tab lost focus');
+      setTabHasFocus(false);
+    };
+
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleBlur);
+    
+
     // setLastReceiver(receiver);
-    console.log(`stompClient: ${stompClient}`);
-    console.log(`connectionAvailable: ${connectionAvailable}`);
     setTimeout(() => {
-      if (stompClient && !firstUpdate.current) {
+      if (stompClient && !firstUpdate.current && tabHasFocus) {
           console.log(user.email + " leyó tu mensaje por useEffect," + receiver)
           sendReadNotification()
           firstUpdate.current = false;
         }
-    }, 10000);
+    }, 2000);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('blur', handleBlur);}
+    
   }, [receiver, chat.privateChats[`${receiver}`]]);
 
 
@@ -78,7 +96,7 @@ const ChatRoom = ({ stompClient }: any) => {
       var chatMessage: IMessage = {
         idSender: user.email,
         idReceiver: receiver,
-        message: `Your message has been read ${receiver}`,
+        message: `Message of notification from ${user.email}`,
         status: 'NOTIFICATION',
         isSeen: true,
       };
@@ -142,11 +160,13 @@ const ChatRoom = ({ stompClient }: any) => {
               : receiver !== undefined &&
                 chat.privateChats[receiver].map((chat: any, index: number) => (
                   <p style={{ marginLeft: '10px' }} key={index}>
-                    {chat.status === 'NOTIFICATION' && ?
-                    <b className="text-info">&#2713;</b>
-                    //Dispatch => Mandarle chatIdSender, en el chatSlice crear el
-                    :
+                    {chat.status === 'MESSAGE'?
                     <><b>{chat.idSender}</b> : {chat.message}{' '}</>
+                    // <b className="text-info"> </b>
+                    //Dispatch => Mandarle chatIdSender, en el chatSlice crear el
+                    : chat.status === 'NOTIFICATION' && chat.idSender === receiver?
+                    <b className="text-info">&#2713; {`${chat.idSender} vio tu mensaje, ${user.email}`}</b>
+                    :<></>
                   }
                   </p>
                 ))}

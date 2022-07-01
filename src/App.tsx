@@ -62,7 +62,7 @@ function App() {
   // console.log(receiver);
 
   const connectToSocket = () => {
-    let Sock = new SockJS("http://localhost:3000");
+    let Sock = new SockJS("http://localhost:8080/ws");
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };

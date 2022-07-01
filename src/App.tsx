@@ -69,7 +69,7 @@ function App() {
   };
 
   const onConnected = () => {
-    stompClient.subscribe("/chatroom/public", onMessageReceived);
+    stompClient.subscribe("/chatroom/general", onMessageReceived);
     stompClient.subscribe(
       "/user/" + auth.currentUser?.email + "/private",
       onPrivateMessage
@@ -134,7 +134,7 @@ function App() {
   const userJoin = () => {
     var chatMessage = {
       idSender: user.email,
-      idReceiver: "public",
+      idReceiver: "general",
       message: "",
       status: "JOIN",
       isSeen: false,

@@ -27,7 +27,7 @@ const ChatRoom = ({ stompClient }: any) => {
     if (stompClient) {
       var chatMessage: IMessage = {
         idSender: user.email,
-        idReceiver: receiver,
+        idReceiver: "general",
         message: message,
         status: "MESSAGE",
         isSeen: false,

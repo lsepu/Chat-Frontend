@@ -4,6 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { addOwnPrivateChatMessage } from "../state/features/chatSlice";
+import { selectChannel } from "../state/features/channelSlice";
+
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 
 interface IMessage {
   idSender: string;
@@ -16,9 +20,12 @@ interface IMessage {
 const ChatRoom = ({ stompClient }: any) => {
   const { user } = useSelector((state: stateType) => state.user);
   const chat = useSelector((state: stateType) => state.chat);
+  const channelState = useSelector(selectChannel());
 
   const { receiver, channel } = useParams();
   const [message, setMessage] = useState("");
+  const [channelDescription, setChannelDescription] = useState("");
+  const [show, setShow] = useState(false);
 
   // console.log(channel);
   // console.log(chat.channelChat[`${channel}`]);
@@ -68,8 +75,26 @@ const ChatRoom = ({ stompClient }: any) => {
     }
   };
 
+  const showDescription = () => {
+    let desc = "";
+    channelState.map((channelReceieved) => {
+      if (channelReceieved.name === channel) {
+        desc = channelReceieved.description;
+      }
+    });
+    setChannelDescription(desc);
+    setShow(true);
+  };
+
   return (
     <div className="content-wrapper">
+      <Modal show={show} onHide={() => setShow(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Channel Description</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{channelDescription}</Modal.Body>
+      </Modal>
+
       <div className="content-division">
         <Menu />
         <div className="content-main">
@@ -104,6 +129,16 @@ const ChatRoom = ({ stompClient }: any) => {
             >
               Send
             </button>
+          </div>
+          <div>
+            {channel && channel !== "general" && (
+              <p
+                onClick={showDescription}
+                style={{ color: "blue", cursor: "pointer", fontSize: "14px" }}
+              >
+                Check channel description
+              </p>
+            )}
           </div>
         </div>
       </div>

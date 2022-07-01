@@ -70,7 +70,7 @@ export const updateChannel = createAsyncThunk(
         );
         return channel as channelType;
         // console.log(response);
-        // return (await response.json()) as channelType;
+        return (await response.json()) as channelType;
     }
 );
 
@@ -125,7 +125,7 @@ export const channelSSlice = createSlice({
 
         builder.addCase(updateChannel.fulfilled, (state, action) => {
             state.status = channelFetchStatus.COMPLETED;
-            //state.channel = action.payload;
+            state.channel = state.channel.map((channel) => channel.id === action.payload.id ? action.payload : channel);
         });
 
         builder.addCase(updateChannel.rejected, (state) => {
